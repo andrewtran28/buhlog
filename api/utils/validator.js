@@ -20,20 +20,6 @@ const signupValidator = [
     .isLength({ min: 1, max: 25 })
     .withMessage("Username must be between 1-25 characters.")
     .bail(),
-  body("firstName")
-    .trim()
-    .notEmpty()
-    .matches(/^[a-zA-Z ]*$/)
-    .withMessage("Name should only contain letters.")
-    .bail()
-    .isLength({ max: 25 })
-    .bail(),
-  body("lastName")
-    .trim()
-    .matches(/^[a-zA-Z ]*$/)
-    .withMessage("Name should only contain letters.")
-    .isLength({ max: 25 })
-    .bail(),
   body("password").trim().isLength({ min: 6, max: 50 }).withMessage("Password must be between 6-50 characters.").bail(),
 ];
 
@@ -42,7 +28,12 @@ const postValidator = [
   body("content").trim().notEmpty().bail(),
 ];
 
+const commentValidator = [
+  body("text").trim().notEmpty().isLength({ max: 500 }).withMessage("Comment must be under 500 characters.").bail(),
+];
+
 module.exports = {
   signupValidator,
   postValidator,
+  commentValidator,
 };

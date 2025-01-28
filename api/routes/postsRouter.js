@@ -1,18 +1,19 @@
 const postsController = require("../controllers/postsController");
 const { Router } = require("express");
 const postsRouter = Router();
-const { postValidator } = require("../utils/validator");
+const { authenticateToken } = require("../utils/auth");
+const { postValidator, commentValidator } = require("../utils/validator");
 
 postsRouter.get("/", postsController.getAllPosts);
 
-postsRouter.post("/", postValidator, postsController.createPost);
 postsRouter.get("/:postTitle", postsController.getPostByTitle);
-postsRouter.put("/:postId", postValidator, postsController.editPost);
-postsRouter.delete("/:postId", postsController.deletePost);
+postsRouter.post("/", authenticateToken, postValidator, postsController.createPost);
+postsRouter.put("/:postId", authenticateToken, postValidator, postsController.editPost);
+postsRouter.delete("/:postId", authenticateToken, postsController.deletePost);
 
 postsRouter.get("/:postTitle/comments", postsController.getComments);
-postsRouter.post("/:postTitle/comments", postsControllers.createComment);
-postsRouter.post("/:postTitle/comments", postsControllers.editComment);
-postsRouter.delete("/:postTitle/comments", postsControllers.deleteComment);
+postsRouter.post("/:postTitle/comments", authenticateToken, commentValidator, postsController.createComment);
+postsRouter.put("/:postTitle/comments", authenticateToken, commentValidator, postsController.editComment);
+postsRouter.delete("/:postTitle/comments", authenticateToken, postsController.deleteComment);
 
 module.exports = postsRouter;

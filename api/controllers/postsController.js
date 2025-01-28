@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const asyncHandler = require("express-async-handler");
-const CustomError = require("../utils/CustomError");
+const CustomError = require("../utils/customError");
 
 function formatDate(date) {
   const options = { month: "short" };
@@ -53,10 +53,6 @@ const getPostByTitle = asyncHandler(async (req, res) => {
 });
 
 const createPost = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new CustomError(401, "Not authorized to perform this action.");
-  }
-
   const user = await prisma.user.findUnique({
     where: { id: req.user.id },
   });
@@ -82,8 +78,12 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 const deletePost = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new CustomError(401, "Not authorized to perform this action.");
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+  });
+
+  if (!user.isAuthor) {
+    throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
   await prisma.post.delete({
@@ -94,10 +94,6 @@ const deletePost = asyncHandler(async (req, res) => {
 });
 
 const editPost = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new CustomError(401, "You're not authorized to perform this operation.");
-  }
-
   const user = await prisma.user.findUnique({
     where: { id: req.user.id },
   });
@@ -131,12 +127,12 @@ const getComments = asyncHandler(async (req, res) => {
 });
 
 const createComment = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new CustomError(401, "Not authorized to perform this action.");
-  }
-
   const postTitle = decodeURIComponent(req.params.postTitle);
   const post = await findPostByTitle(postTitle);
+
+  if (!post) {
+    throw new CustomError(404, "Post not found.");
+  }
 
   await prisma.comments.create({
     data: {
@@ -145,14 +141,43 @@ const createComment = asyncHandler(async (req, res) => {
       postId: post.id,
     },
   });
+
+  res.status(201).json({ message: "Comment created successfully." });
+});
+
+const editComment = asyncHandler(async (req, res) => {
+  const commentID = parseInt(req.params.commentId, 10);
+  if (isNaN(commentId)) {
+    throw new CustomError(400, "Invalid comment ID.");
+  }
+
+  const comment = await prisma.comments.findUnique({
+    where: { id: commentId },
+  });
+
+  if (!comment) {
+    throw new CustomError(404, "Comment not found.");
+  }
+
+  if (comment.userId !== req.user.id) {
+    throw new CustomError(403, "You are not authorized to edit this comment.");
+  }
+
+  await prisma.comments.update({
+    where: { id: commentId },
+    data: {
+      text: req.body.text,
+      createdAt: Date.now(),
+    },
+  });
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new CustomError(401, "Not authorized to perform this action.");
+  const commentId = parseInt(req.params.commentId, 10);
+  if (isNaN(commentId)) {
+    throw new CustomError(400, "Invalid comment ID.");
   }
 
-  const commentId = parseInt(req.params.commentId, 10);
   const comment = await prisma.comments.findUnique({
     where: { id: commentId },
   });
@@ -180,5 +205,6 @@ module.exports = {
   editPost,
   getComments,
   createComment,
+  editComment,
   deleteComment,
 };

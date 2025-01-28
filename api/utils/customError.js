@@ -1,13 +1,14 @@
-const CustomError = (statusCode, message) => {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  error.isOperational = true;
+class CustomError extends Error {
+  constructor(statusCode, message) {
+    super(message); // Call the parent Error constructor
+    this.statusCode = statusCode;
+    this.isOperational = true;
 
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(error, CustomError);
+    // Capture the stack trace (optional, for debugging)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, CustomError);
+    }
   }
-
-  return error;
-};
+}
 
 module.exports = CustomError;

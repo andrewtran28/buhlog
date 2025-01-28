@@ -1,59 +1,44 @@
-reqiure("dotenv").config();
+require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
-// const session = require("express-session");
 const path = require("node:path");
-// const passport = require("./config/passport");
-const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prismaClient");
-
+const passport = require("passport");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { configurePassport } = require("./utils/auth");
 const usersRouter = require("./routes/usersRouter");
 const postsRouter = require("./routes/postsRouter");
-const authorRouter = require("./routes/authorRouter");
 
 const app = express();
-// const prisma = PrismaClient();
 
-app.use(express.urlencode({ extended: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+//Initialize Passport and Configure Strategy
+app.use(passport.initialize());
+configurePassport(passport);
 
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: { maxAge: 1000 * 60 * 60 * 24 }, //ms
-//     store: new PrismaSessionStore(prisma, {
-//       checkPeriod: 2 * 60 * 1000, //ms
-//       dbRecordIdIsSessionId: true,
-//       dbRecordIdFunction: undefined,
-//     }),
-//   })
-// );
-// app.use(passport.initialize());
-// app.use(passport.session());
+//Routes
+app.use("/api/users", usersRouter);
+app.use("/api/posts", postsRouter);
 
-//Authentication setup
-const isAuth = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login"); // Redirect to /login if not authenticated
-};
-
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
+//Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(`ERROR: ${req.method} ${req.url}`, {
+    user: req.user ? req.user.username : "Unauthenticated user",
+    body: req.body,
+    error: err.stack,
+  });
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal server error",
+  });
 });
 
-//Routing
-app.get("/", indexController.getIndex);
-app.use(indexController.getErrorPage);
-
+//Start Express server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Express App - Listening on port http://localhost:${PORT}`);
+  console.log(`Server running on: http://localhost:${PORT}`);
 });

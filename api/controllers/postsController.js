@@ -5,6 +5,10 @@ const CustomError = require("../utils/customError");
 const { handleValidationErrors } = require("../utils/validator");
 
 function formatDate(date) {
+  if (!date || isNaN(date.getTime())) {
+    return ""; // Return an empty string or handle the error appropriately
+  }
+
   const options = { month: "short" };
   const month = new Intl.DateTimeFormat("en-US", options).format(date);
   const day = date.getDate();
@@ -40,6 +44,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
   const formattedPosts = posts.map((post) => ({
     ...post,
     createdAt: formatDate(post.createdAt),
+    updatedAt: formatDate(post.updatedAt),
   }));
 
   res.status(200).json(formattedPosts);
@@ -115,7 +120,7 @@ const editPost = asyncHandler(async (req, res) => {
       title: req.body.title,
       content: req.body.content,
       published: Boolean(req.body.published).valueOf(),
-      userId: user.id,
+      updatedAt: new Date(),
     },
   });
 
@@ -177,7 +182,7 @@ const editComment = asyncHandler(async (req, res) => {
     where: { id: commentId },
     data: {
       text: req.body.text,
-      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   });
 

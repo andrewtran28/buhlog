@@ -41,6 +41,7 @@ model Post {
   comments  Comment[] @relation("PostComments")
   published Boolean   @default(false)
   createdAt DateTime  @default(now())
+  updatedAt DateTime  
 
   @@map("posts")
 }
@@ -53,6 +54,7 @@ model Comment {
   user      User      @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
   post      Post      @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
+  updatedAt DateTime  
 
   @@map("comments")
 }

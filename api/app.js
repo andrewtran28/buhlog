@@ -5,6 +5,7 @@ const passport = require("passport");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { configurePassport } = require("./utils/auth");
+const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
 const postsRouter = require("./routes/postsRouter");
 
@@ -21,6 +22,7 @@ app.use(passport.initialize());
 configurePassport(passport);
 
 //Routes
+app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/posts", postsRouter);
 

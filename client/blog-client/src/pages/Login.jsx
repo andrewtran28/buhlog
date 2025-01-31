@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Fetch from .env
 
 function Login() {
@@ -25,11 +24,6 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        if (typeof data.token !== "string") {
-          console.error("Received token is not a valid string:", data.token);
-          setErrorMessage("Invalid token received from server.");
-          return;
-        }
         login(data.token); // Store token in sessionStorage
         navigate("/"); // Redirect to home
       } else {

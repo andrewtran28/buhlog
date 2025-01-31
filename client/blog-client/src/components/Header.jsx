@@ -14,8 +14,7 @@ function Header() {
       <nav>
         {user ? (
           <div>
-            Welcome,
-            <Link to={`/users/${user.id}`}>{user.username}</Link>
+            Welcome, <Link to={`/users`}>{user.username}</Link>
             <button onClick={logout}>Logout</button>
           </div>
         ) : (

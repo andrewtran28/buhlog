@@ -5,8 +5,8 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 // import Post from "./pages/Post";
 import Login from "./pages/Login";
-// import Signup from "./pages/Signup";
-// import UserProfile from "./pages/UserProfile";
+import Signup from "./pages/Signup";
+import UserPage from "./pages/UserPage";
 // import NewPost from "./pages/NewPost";
 // import EditPost from "./pages/EditPost";
 import ErrorPage from "./pages/ErrorPage";
@@ -21,8 +21,8 @@ const App = () => {
             <Route path="/" element={<Home />} />
             {/* <Route path="/posts/:id" element={<Post />} /> */}
             <Route path="/login" element={<Login />} />
-            {/* <Route path="/signup" element={<Signup />} /> */}
-            {/* <Route path="/users/:username" element={<ProtectedRoute element={<UserProfile />} />} /> */}
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/users/" element={<ProtectedRoute element={<UserPage />} />} />
             {/* <Route path="/new-post" element={<ProtectedRoute element={<NewPost />} />} /> */}
             {/* <Route path="/edit-post/:id" element={<ProtectedRoute element={<EditPost />} />} /> */}
             <Route path="*" element={<ErrorPage />} />

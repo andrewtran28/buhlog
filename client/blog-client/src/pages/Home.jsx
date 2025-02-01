@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../utils/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Home = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/posts`);
+        const response = await fetch(`${API_BASE_URL}/api/post`);
         const data = await response.json();
-        setPosts(data);
+        if (response.ok) {
+          setPosts(data);
+        } else {
+          setErrorMessage(data.message || "Failed to fetch posts.");
+        }
       } catch (error) {
         console.error("Error fetching posts:", error);
+        setErrorMessage("An error occurred while fetching posts.");
       } finally {
         setLoading(false);
       }
@@ -27,20 +35,30 @@ const Home = () => {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
-        <h1>Latest Blog Posts</h1>
+      <div>
+        {user?.isAuthor && (
+          <div>
+            <Link to="/new-post">
+              <button>Create New Post</button>
+            </Link>
+          </div>
+        )}
+
+        <h1>Articles</h1>
+
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
         {posts.length === 0 ? (
           <p>No posts available.</p>
         ) : (
           <div className="latest-posts">
             {posts.map((post) => (
-              <div key={post.id} className="border p-4 rounded-lg shadow-md hover:shadow-lg transition">
-                <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                <p className="text-gray-700">{post.content.slice(0, 100) + "..."}</p>
-                <Link to={`/post/${post.id}`} className="text-blue-500 hover:underline mt-2 inline-block">
-                  Read more
-                </Link>
+              <div key={post.id}>
+                <h2>
+                  <Link to={`/post/${post.title}`}>{post.title}</Link>
+                </h2>
+                <p>{post.content.slice(0, 100) + "..."}</p>
+                <Link to={`/post/${post.title}`}>Read more</Link>
               </div>
             ))}
           </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatDateTime } from "../utils/FormatDate";
 
 function CommentsSection({ comments, user, token, API_URL, setComments, fetchComments }) {
   const [newComment, setNewComment] = useState("");
@@ -86,7 +87,7 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
               <p>
                 <strong>{comment.username}:</strong> {comment.text}
               </p>
-              <p>{comment.createdAt}</p>
+              <p>{formatDateTime(comment.createdAt)}</p>
               {user && user.username === comment.username && (
                 <div>
                   {editingComment === comment.id ? (

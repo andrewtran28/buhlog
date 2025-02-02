@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 function EditPost() {
-  const { postTitle } = useParams();
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post/${encodeURIComponent(postTitle)}`;
+  const { postId } = useParams();
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post`;
 
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   const [post, setPost] = useState(null);
@@ -17,7 +19,7 @@ function EditPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}/${postId}/edit`);
         const data = await response.json();
         if (response.ok) {
           setPost(data);
@@ -32,10 +34,10 @@ function EditPost() {
     };
 
     fetchPost();
-  }, [postTitle]);
+  }, [postId]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault;
+    e.preventDefault();
 
     if (!updatedTitle || !updatedContent) {
       setErrorMessage("Both title and content are required.");
@@ -43,7 +45,7 @@ function EditPost() {
     }
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/${post.id}/edit`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -77,15 +79,26 @@ function EditPost() {
           <input type="text" value={updatedTitle} onChange={(e) => setUpdatedTitle(e.target.value)} />
         </label>
         <br />
-        <label>
-          Content:
-          <textarea value={updatedContent} onChange={(e) => setUpdatedContent(e.target.value)} />
-        </label>
+        <label>Content</label>
+        <ReactQuill value={updatedContent} onChange={setUpdatedContent} modules={quillModules} />
         <br />
         <button type="submit">Update Post</button>
       </form>
     </div>
   );
 }
+
+const quillModules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["bold", "italic", "underline"],
+    [{ align: [] }],
+    ["link"],
+    [{ indent: "-1" }, { indent: "+1" }],
+    ["blockquote"],
+    [{ color: [] }, { background: [] }],
+  ],
+};
 
 export default EditPost;

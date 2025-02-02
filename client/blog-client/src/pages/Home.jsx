@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import { formatDate } from "../utils/FormatDate";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Home = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingDrafts, setLoadingDrafts] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -31,19 +34,37 @@ const Home = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    if (user?.isAuthor) {
+      const fetchDrafts = async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/post/drafts`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setDrafts(data);
+          } else {
+            console.error("Failed to fetch draft posts.");
+          }
+        } catch (error) {
+          console.error("An error occurred while fetching draft posts:", error);
+        } finally {
+          setLoadingDrafts(false);
+        }
+      };
+
+      fetchDrafts();
+    }
+  }, [user, token]);
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <>
       <div>
-        {user?.isAuthor && (
-          <div>
-            <Link to="/new-post">
-              <button>Create New Post</button>
-            </Link>
-          </div>
-        )}
-
         <h1>Articles</h1>
 
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -57,11 +78,43 @@ const Home = () => {
                 <h2>
                   <Link to={`/post/${post.title}`}>{post.title}</Link>
                 </h2>
-                <p>{post.content.slice(0, 100) + "..."}</p>
-                <Link to={`/post/${post.title}`}>Read more</Link>
+                <span>{formatDate(post.createdAt)}</span>
+                {/* <span>{post.userId}</span> */}
               </div>
             ))}
           </div>
+        )}
+
+        <hr />
+
+        {user?.isAuthor && (
+          <>
+            <div>
+              <Link to="/new-post">
+                <button>Create New Post</button>
+              </Link>
+            </div>
+
+            <div>
+              <h2>Draft Posts</h2>
+              {loadingDrafts ? (
+                <p>Loading drafts...</p>
+              ) : drafts.length === 0 ? (
+                <p>No draft posts available.</p>
+              ) : (
+                <div className="draft-posts">
+                  {drafts.map((draft) => (
+                    <div key={draft.id}>
+                      <h3>
+                        <Link to={`/post/${draft.title}/edit`}>{draft.title}</Link>
+                      </h3>
+                      <span>{formatDate(draft.updatedAt)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
     </>

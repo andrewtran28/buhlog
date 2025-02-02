@@ -83,7 +83,7 @@ function Post() {
           <PostActions post={post} />
           {user && user.username === post.author && (
             <div>
-              <button onClick={() => navigate(`/post/${post.title}/edit`)}>Edit Post</button>
+              <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
               <button onClick={handleDeletePost}>Delete Post</button>
             </div>
           )}

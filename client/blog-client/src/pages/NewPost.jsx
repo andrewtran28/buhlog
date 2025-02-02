@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -56,10 +58,8 @@ function NewPost() {
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </label>
 
-        <label>
-          Content:
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} rows="6" required />
-        </label>
+        <label>Content</label>
+        <ReactQuill value={content} onChange={setContent} modules={quillModules} />
 
         <label>
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
@@ -73,5 +73,18 @@ function NewPost() {
     </div>
   );
 }
+
+const quillModules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["bold", "italic", "underline"],
+    [{ align: [] }],
+    ["link"],
+    [{ indent: "-1" }, { indent: "+1" }],
+    ["blockquote"],
+    [{ color: [] }, { background: [] }],
+  ],
+};
 
 export default NewPost;

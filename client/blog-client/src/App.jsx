@@ -20,11 +20,11 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/post/:postTitle" element={<Post />} />
+            <Route path="/post/:postId/edit" element={<ProtectedRoute element={<EditPost />} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/users/" element={<ProtectedRoute element={<UserPage />} />} />
             <Route path="/new-post" element={<ProtectedRoute element={<NewPost />} />} />
-            <Route path="/post/:postTitle/edit" element={<ProtectedRoute element={<EditPost />} />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </Router>

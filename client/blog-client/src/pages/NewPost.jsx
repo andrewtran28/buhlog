@@ -12,14 +12,13 @@ function NewPost() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [published, setPublished] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   if (!user?.isAuthor) {
     return <p>You do not have permission to create a post.</p>; //return to homepage
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, isPublished) => {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
@@ -34,12 +33,16 @@ function NewPost() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, content, published }),
+        body: JSON.stringify({ title, content, published: isPublished }),
       });
 
       const data = await response.json();
       if (response.ok) {
-        navigate(`/post/${encodeURIComponent(title)}`);
+        if (isPublished) {
+          navigate(`/post/${encodeURIComponent(title)}`);
+        } else {
+          navigate("/");
+        }
       } else {
         setErrorMessage(data.message || "Failed to create post.");
       }
@@ -58,15 +61,16 @@ function NewPost() {
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </label>
 
-        <label>Content</label>
         <ReactQuill value={content} onChange={setContent} modules={quillModules} />
 
-        <label>
-          <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-          Publish
-        </label>
-
-        <button type="submit">Create Post</button>
+        <div>
+          <button type="button" onClick={(e) => handleSubmit(e, false)}>
+            Save Draft
+          </button>
+          <button type="button" onClick={(e) => handleSubmit(e, true)}>
+            Publish Post
+          </button>
+        </div>
       </form>
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}

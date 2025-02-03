@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate } from "../utils/FormatDate";
+import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -64,8 +65,17 @@ const Home = () => {
 
   return (
     <>
-      <div>
-        <h1>Articles</h1>
+      <section id="home">
+        <div className="home-header">
+          <h1>Latest Articles</h1>
+          {user?.isAuthor && (
+            <div>
+              <Link to="/new-post">
+                <button>Create New Post</button>
+              </Link>
+            </div>
+          )}
+        </div>
 
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
@@ -74,29 +84,25 @@ const Home = () => {
         ) : (
           <div className="latest-posts">
             {posts.map((post) => (
-              <div key={post.id}>
+              <div key={post.id} className="post">
                 <h2>
                   <Link to={`/post/${post.title}`}>{post.title}</Link>
                 </h2>
-                <span>{formatDate(post.createdAt)}</span>
-                {/* <span>{post.userId}</span> */}
+                <span>
+                  {post.author} | {formatDate(post.createdAt)}
+                  {post.comments.length > 0 && ` | ${post.comments.length} Comments`}
+                </span>
               </div>
             ))}
           </div>
         )}
 
-        <hr />
-
         {user?.isAuthor && (
           <>
-            <div>
-              <Link to="/new-post">
-                <button>Create New Post</button>
-              </Link>
-            </div>
+            <hr />
 
             <div>
-              <h2>Draft Posts</h2>
+              <h2>Your Drafts</h2>
               {loadingDrafts ? (
                 <p>Loading drafts...</p>
               ) : drafts.length === 0 ? (
@@ -104,11 +110,10 @@ const Home = () => {
               ) : (
                 <div className="draft-posts">
                   {drafts.map((draft) => (
-                    <div key={draft.id}>
+                    <div key={draft.id} className="draft">
                       <h3>
-                        <Link to={`/post/${draft.title}/edit`}>{draft.title}</Link>
+                        <Link to={`/post/${draft.id}/edit`}>{draft.title}</Link>
                       </h3>
-                      <span>{formatDate(draft.updatedAt)}</span>
                     </div>
                   ))}
                 </div>
@@ -116,7 +121,7 @@ const Home = () => {
             </div>
           </>
         )}
-      </div>
+      </section>
     </>
   );
 };

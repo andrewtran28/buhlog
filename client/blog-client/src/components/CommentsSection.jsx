@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { formatDateTime } from "../utils/FormatDate";
 
 function CommentsSection({ comments, user, token, API_URL, setComments, fetchComments }) {
@@ -6,6 +7,12 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
   const [editingComment, setEditingComment] = useState(null);
   const [editedComment, setEditedComment] = useState("");
   const [commentError, setCommentError] = useState("");
+
+  const handleTextInput = (e) => {
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    textarea.style.height = `calc(${textarea.scrollHeight}px - 4px)`;
+  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -78,61 +85,80 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
   };
 
   return (
-    <section>
-      <h2>Comments</h2>
+    <div className="comments-section">
+      <h2>Comments {comments.length > 0 && `(${comments.length})`}</h2>
+      {user ? (
+        <div className="new-comment">
+          <span>
+            <strong>{user.username}: </strong>
+          </span>
+          <form onSubmit={handleCommentSubmit}>
+            <textarea
+              placeholder="Add a comment..."
+              value={newComment}
+              onInput={handleTextInput}
+              onChange={(e) => setNewComment(e.target.value)}
+              maxLength="300"
+              rows="1"
+            />
+            <button type="submit">Submit</button>
+          </form>
+          {commentError && <p style={{ color: "red" }}>{commentError}</p>}
+        </div>
+      ) : (
+        <p>
+          <Link to="/login">Log in</Link> to post a comment.
+        </p>
+      )}
       {comments.length > 0 ? (
         <ul>
           {comments.map((comment) => (
             <li key={comment.id}>
-              <p>
-                <strong>{comment.username}:</strong> {comment.text}
-              </p>
-              <p>{formatDateTime(comment.createdAt)}</p>
-              {user && user.username === comment.username && (
-                <div>
-                  {editingComment === comment.id ? (
-                    <div>
-                      <textarea value={editedComment} onChange={(e) => setEditedComment(e.target.value)} rows="2" />
-                      <button onClick={() => handleEditComment(comment.id)}>Save</button>
-                      <button onClick={() => setEditingComment(null)}>Cancel</button>
-                    </div>
-                  ) : (
-                    <>
-                      <button onClick={() => handleDeleteComment(comment.id)}>Delete</button>
-                      <button
-                        onClick={() => {
-                          setEditingComment(comment.id);
-                          setEditedComment(comment.text);
-                        }}
-                      >
-                        Edit
-                      </button>
-                    </>
-                  )}
+              <div className="comment">
+                <div className="comment-top">
+                  <strong>{comment.username}</strong>
+                  <span className="comment-date">{formatDateTime(comment.createdAt)}</span>
                 </div>
-              )}
+                {user && user.username === comment.username && (
+                  <>
+                    {editingComment === comment.id ? (
+                      <div className="comment-edit">
+                        <div className="comment-btns">
+                          <button onClick={() => handleEditComment(comment.id)}>Save</button>
+                          <button onClick={() => setEditingComment(null)}>Cancel</button>
+                        </div>
+                        <textarea
+                          placeholder="Edit your comment..."
+                          value={editedComment}
+                          onChange={(e) => setEditedComment(e.target.value)}
+                          maxLength="300"
+                          rows="3"
+                        />
+                      </div>
+                    ) : (
+                      <div className="comment-btns">
+                        <button
+                          onClick={() => {
+                            setEditingComment(comment.id);
+                            setEditedComment(comment.text);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button onClick={() => handleDeleteComment(comment.id)}>Delete</button>
+                      </div>
+                    )}
+                  </>
+                )}
+                {editingComment !== comment.id && <span className="comment-text">{comment.text}</span>}
+              </div>
             </li>
           ))}
         </ul>
       ) : (
         <p>No comments yet.</p>
       )}
-
-      {user ? (
-        <section>
-          <h3>Post a Comment</h3>
-          <form onSubmit={handleCommentSubmit}>
-            <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} rows="3" />
-            <button type="submit">Submit</button>
-          </form>
-          {commentError && <p style={{ color: "red" }}>{commentError}</p>}
-        </section>
-      ) : (
-        <p>
-          <Link to="/login">Log in</Link> to post a comment.
-        </p>
-      )}
-    </section>
+    </div>
   );
 }
 

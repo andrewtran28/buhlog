@@ -36,7 +36,7 @@ function EditPost() {
     fetchPost();
   }, [postId]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, publish) => {
     e.preventDefault();
 
     if (!updatedTitle || !updatedContent) {
@@ -45,13 +45,17 @@ function EditPost() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/${post.id}/edit`, {
+      const response = await fetch(`${API_URL}/${post.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: updatedTitle, content: updatedContent }),
+        body: JSON.stringify({
+          title: updatedTitle,
+          content: updatedContent,
+          published: publish !== null ? publish : post.published,
+        }),
       });
 
       if (response.ok) {
@@ -82,7 +86,12 @@ function EditPost() {
         <label>Content</label>
         <ReactQuill value={updatedContent} onChange={setUpdatedContent} modules={quillModules} />
         <br />
-        <button type="submit">Update Post</button>
+        <button type="button" onClick={(e) => handleSubmit(e, null)}>
+          Save
+        </button>
+        <button type="button" onClick={(e) => handleSubmit(e, !post.published)}>
+          {post.published ? "Unpublish" : "Publish"}
+        </button>
       </form>
     </div>
   );

@@ -53,7 +53,7 @@ const updateDateTime = (createdAt, updatedAt) => {
 
   // If not the same day, log "hello"
   if (!isSameDay) {
-    return `(Last Updated ${formatDateTime(updatedAt)})`;
+    return `(Last updated ${formatDateTime(updatedAt)})`;
   }
 
   return "";

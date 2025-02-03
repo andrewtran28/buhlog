@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import PostActions from "../components/PostActions";
+import { formatDate, updateDateTime } from "../utils/FormatDate";
 import CommentsSection from "../components/CommentsSection";
+import "../styles/Post.css";
 
 function Post() {
   const { postTitle } = useParams();
@@ -77,17 +78,30 @@ function Post() {
   if (errorMessage) return <p style={{ color: "red" }}>{errorMessage}</p>;
 
   return (
-    <div>
+    <section id="article">
       {post ? (
         <>
-          <PostActions post={post} />
-          {user && user.username === post.author && (
+          <h1 id="title">{post.title}</h1>
+          <div className="article-top">
             <div>
-              <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
-              <button onClick={handleDeletePost}>Delete Post</button>
+              <span className="author">{post.author}</span> |{" "}
+              <span className="article-date">
+                {formatDate(post.createdAt)} {updateDateTime(post.createdAt, post.updatedAt)}
+              </span>
             </div>
-          )}
+            {user && user.username === post.author && (
+              <span>
+                <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
+                <button onClick={handleDeletePost}>Delete Post</button>
+              </span>
+            )}
+          </div>
           <hr />
+
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+
+          <hr />
+
           <CommentsSection
             comments={comments}
             user={user}
@@ -100,7 +114,7 @@ function Post() {
       ) : (
         <p>Post not found.</p>
       )}
-    </div>
+    </section>
   );
 }
 

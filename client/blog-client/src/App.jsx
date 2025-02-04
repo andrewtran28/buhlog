@@ -10,25 +10,31 @@ import UserPage from "./pages/UserPage";
 import NewPost from "./pages/NewPost";
 import EditPost from "./pages/EditPost";
 import ErrorPage from "./pages/ErrorPage";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
     <>
       <AuthProvider>
         <Router>
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/post/:postTitle" element={<Post />} />
-              <Route path="/post/:postId/edit" element={<ProtectedRoute element={<EditPost />} />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/users/" element={<ProtectedRoute element={<UserPage />} />} />
-              <Route path="/new-post" element={<ProtectedRoute element={<NewPost />} />} />
-              <Route path="*" element={<ErrorPage />} />
-            </Routes>
-          </main>
+          <div id="page-layout">
+            <div>
+              <Header />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/post/:postTitle" element={<Post />} />
+                  <Route path="/post/:postId/edit" element={<ProtectedRoute element={<EditPost />} />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/users/" element={<ProtectedRoute element={<UserPage />} />} />
+                  <Route path="/new-post" element={<ProtectedRoute element={<NewPost />} />} />
+                  <Route path="*" element={<ErrorPage />} />
+                </Routes>
+              </main>
+            </div>
+            <Footer />
+          </div>
         </Router>
       </AuthProvider>
     </>

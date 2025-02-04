@@ -119,7 +119,7 @@ const deletePost = asyncHandler(async (req, res) => {
   }
 
   await prisma.post.delete({
-    where: { title: req.params.postTitle },
+    where: { id: parseInt(req.params.postId) },
   });
 
   res.status(200).json({ message: "Post was successfully deleted." });

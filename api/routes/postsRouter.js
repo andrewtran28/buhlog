@@ -12,7 +12,7 @@ postsRouter.get("/:postTitle", postsController.getPostByTitle);
 postsRouter.post("/", authenticateToken, postValidator, postsController.createPost);
 postsRouter.get("/:postId/edit", postsController.getPostById);
 postsRouter.put("/:postId", authenticateToken, postValidator, postsController.editPost);
-postsRouter.delete("/:postTitle", authenticateToken, postsController.deletePost);
+postsRouter.delete("/:postId", authenticateToken, postsController.deletePost);
 
 postsRouter.get("/:postTitle/comments", commentsController.getComments);
 postsRouter.post("/:postTitle/comments", authenticateToken, commentValidator, commentsController.createComment);

@@ -55,24 +55,24 @@ function Post() {
     }
   };
 
-  const handleDeletePost = async () => {
-    try {
-      const response = await fetch(API_URL, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // const handleDeletePost = async () => {
+  //   try {
+  //     const response = await fetch(API_URL, {
+  //       method: "DELETE",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (response.ok) {
-        navigate("/");
-      } else {
-        console.error("Failed to delete post.");
-      }
-    } catch (error) {
-      console.error("An error occurred while deleting the post.");
-    }
-  };
+  //     if (response.ok) {
+  //       navigate("/");
+  //     } else {
+  //       console.error("Failed to delete post.");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred while deleting the post.");
+  //   }
+  // };
 
   if (loading) return <p>Loading post...</p>;
   if (errorMessage) return <p style={{ color: "red" }}>{errorMessage}</p>;
@@ -92,7 +92,7 @@ function Post() {
             {user && user.username === post.author && (
               <span>
                 <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
-                <button onClick={handleDeletePost}>Delete Post</button>
+                {/* <button onClick={handleDeletePost}>Delete Post</button> */}
               </span>
             )}
           </div>
@@ -102,14 +102,18 @@ function Post() {
 
           <hr />
 
-          <CommentsSection
-            comments={comments}
-            user={user}
-            token={token}
-            API_URL={API_URL}
-            setComments={setComments}
-            fetchComments={fetchComments}
-          />
+          {post.published ? (
+            <CommentsSection
+              comments={comments}
+              user={user}
+              token={token}
+              API_URL={API_URL}
+              setComments={setComments}
+              fetchComments={fetchComments}
+            />
+          ) : (
+            <p>Drafts do not allow comments.</p>
+          )}
         </>
       ) : (
         <p>Post not found.</p>

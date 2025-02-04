@@ -24,7 +24,6 @@ function UserPage() {
 
         if (response.ok) {
           setUserInfo(data);
-          console.log(userInfo);
         } else {
           setErrorMessage(data.message || "Failed to fetch user info.");
         }

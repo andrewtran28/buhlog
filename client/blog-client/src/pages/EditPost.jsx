@@ -59,13 +59,39 @@ function EditPost() {
       });
 
       if (response.ok) {
-        navigate(`/post/${updatedTitle}`);
+        if (post.published) {
+          navigate(`/post/${updatedTitle}`);
+        } else {
+          navigate("/");
+        }
       } else {
         const data = await response.json();
         setErrorMessage(data.message || "Failed to update the post.");
       }
     } catch (error) {
       console.error("Error updating the post.");
+    }
+  };
+
+  const handleDeletePost = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/${post.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        navigate("/");
+      } else {
+        console.error("Failed to delete post.");
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting the post.");
     }
   };
 
@@ -98,6 +124,7 @@ function EditPost() {
           </button>
         </div>
       </form>
+      <button onClick={handleDeletePost}>Delete Post</button>
     </div>
   );
 }

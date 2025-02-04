@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+#new-post, .quill {
   max-width: 1200px;
 }
 

@@ -84,7 +84,7 @@ function NewPost() {
 
 const quillModules = {
   toolbar: [
-    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ header: "1" }, { header: "2" }],
     [{ list: "ordered" }, { list: "bullet" }],
     ["bold", "italic", "underline"],
     [{ align: [] }],

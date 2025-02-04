@@ -69,7 +69,6 @@ function Signup() {
             <br />
           </span>
         )}
-
         <button type="submit">Sign Up</button>
       </form>
     </div>

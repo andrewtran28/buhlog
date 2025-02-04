@@ -49,6 +49,10 @@
   margin: 40px 0;
 }
 
+.new-comment span {
+  margin-top: 5px;
+}
+
 .new-comment form {
   display: flex;
   align-items: end;
@@ -59,15 +63,8 @@
 .comment {
   display: flex;
   flex-direction: column;
-  align-items: end;
   margin: 40px 0;
   position: relative;
-}
-
-.comment-top {
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .comment-date {
@@ -77,11 +74,21 @@
   margin: 0 10px;
 }
 
+.comment-btns {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .comment-edit {
   display: flex;
   flex-direction: column;
-  align-items: end;
   width: 100%;
+  margin-top: 10px;
+}
+
+.comment-text, .comment-edit {
+  margin-top: 10px;
 }
 
 .comment-edit textarea {
@@ -89,10 +96,6 @@
   place-self: start;
   display: flex;
   width: calc(100% - 2px);
-}
-
-.comment-text {
-  place-self: start;
 }
 
 

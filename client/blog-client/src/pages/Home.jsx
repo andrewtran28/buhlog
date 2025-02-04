@@ -58,6 +58,8 @@ const Home = () => {
       };
 
       fetchDrafts();
+    } else {
+      setLoadingDrafts(false);
     }
   }, [user, token]);
 

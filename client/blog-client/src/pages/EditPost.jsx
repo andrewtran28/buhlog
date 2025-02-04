@@ -75,23 +75,28 @@ function EditPost() {
 
   return (
     <div>
-      <h1>Edit Post</h1>
+      <h1 id="title">Edit Post</h1>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
       <form onSubmit={handleSubmit}>
-        <label>
-          Title:
-          <input type="text" value={updatedTitle} onChange={(e) => setUpdatedTitle(e.target.value)} />
-        </label>
-        <br />
-        <label>Content</label>
+        <input
+          className="title-input"
+          type="text"
+          value={updatedTitle}
+          onChange={(e) => setUpdatedTitle(e.target.value)}
+          placeholder="Title"
+        />
+
         <ReactQuill value={updatedContent} onChange={setUpdatedContent} modules={quillModules} />
-        <br />
-        <button type="button" onClick={(e) => handleSubmit(e, null)}>
-          Save
-        </button>
-        <button type="button" onClick={(e) => handleSubmit(e, !post.published)}>
-          {post.published ? "Unpublish" : "Publish"}
-        </button>
+
+        <div className="new-post-btns">
+          <button type="button" onClick={(e) => handleSubmit(e, null)}>
+            Save
+          </button>
+          <button type="button" onClick={(e) => handleSubmit(e, !post.published)}>
+            {post.published ? "Unpublish" : "Publish"}
+          </button>
+        </div>
       </form>
     </div>
   );

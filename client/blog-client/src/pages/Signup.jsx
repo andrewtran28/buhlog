@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Fetch from .env
 
 function Signup() {
@@ -37,12 +39,12 @@ function Signup() {
   };
 
   return (
-    <>
-      <h1>Sign Up</h1>
+    <div id="login">
+      <h1 id="title">Sign Up</h1>
       <form onSubmit={handleSignup}>
         <label>Username:</label>
         <input name="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-        <br />
+
         <label>Password:</label>
         <input
           name="password"
@@ -51,7 +53,7 @@ function Signup() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <br />
+
         <label>Confirm Password:</label>
         <input
           name="confirmPassword"
@@ -61,10 +63,16 @@ function Signup() {
           required
         />
         <br />
+        {errorMessage && (
+          <span style={{ color: "red" }}>
+            {errorMessage}
+            <br />
+          </span>
+        )}
+
         <button type="submit">Sign Up</button>
       </form>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-    </>
+    </div>
   );
 }
 

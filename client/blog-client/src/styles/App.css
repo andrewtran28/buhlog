@@ -9,11 +9,16 @@ body {
   --header: #191718;
 
   background-color: var(--background);
-  font-size: 1.25rem;
   font-family: "Outfit", Arial, sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
+}
+
+#title {
+  font-size: 4rem;
+  line-height: 4rem;;
+  margin: 30px 0 10px 0;
 }
 
 main {
@@ -49,7 +54,7 @@ button {
   background-color: var(--accent);
   color: var(--font-dark);
   font-family: "Outfit", Arial, sans-serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border: 1px solid var(--font-dark);
   padding: 10px;
 

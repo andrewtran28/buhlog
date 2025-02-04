@@ -9,7 +9,7 @@ function Header() {
     <header>
       <div className="header-left">
         <Link to="/" className="logo">
-          <img className="logo-img" src="/emblem.png" />
+          <img className="logo-img" src="/logo.png" />
           Buhlog
         </Link>
         <span className="pronunciation prevent-select">(/bla:g/)</span>

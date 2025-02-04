@@ -67,7 +67,7 @@ const Home = () => {
     <>
       <section id="home">
         <div className="home-header">
-          <h1>Latest Articles</h1>
+          <h1 id="title">Latest Articles</h1>
           {user?.isAuthor && (
             <div>
               <Link to="/new-post">

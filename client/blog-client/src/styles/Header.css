@@ -33,10 +33,11 @@ header{
 
 .header-right {
   text-align: end;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 .header-right button {
   margin: 5px;
+  padding: 5px 10px;
 }
 

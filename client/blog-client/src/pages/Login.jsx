@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import "../styles/Login.css";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Fetch from .env
 
 function Login() {
@@ -39,19 +41,24 @@ function Login() {
   };
 
   return (
-    <>
-      <h1>Log In</h1>
+    <div id="login">
+      <h1 id="title">Log In</h1>
       <form onSubmit={handleLogin}>
-        <label name="username"> Username: </label>
+        <label name="username">Username: </label>
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-        <br />
+
         <label name="password"> Password: </label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <br />
-        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-        <button type="submit">Login</button>
+        {errorMessage && (
+          <span style={{ color: "red" }}>
+            {errorMessage}
+            <br />
+          </span>
+        )}
+        <button type="submit">Sign Up</button>
       </form>
-    </>
+    </div>
   );
 }
 

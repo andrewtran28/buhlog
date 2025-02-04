@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import "../styles/NewPost.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,7 +16,7 @@ function NewPost() {
   const [errorMessage, setErrorMessage] = useState("");
 
   if (!user?.isAuthor) {
-    return <p>You do not have permission to create a post.</p>; //return to homepage
+    return <p>You do not have permission to create a post.</p>;
   }
 
   const handleSubmit = async (e, isPublished) => {
@@ -52,18 +53,23 @@ function NewPost() {
   };
 
   return (
-    <div>
-      <h1>Create New Post</h1>
+    <div id="new-post">
+      <h1 id="title">Create New Post</h1>
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       <form onSubmit={handleSubmit}>
-        <label>
-          Title:
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        </label>
+        <input
+          className="title-input"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          required
+        />
 
-        <ReactQuill value={content} onChange={setContent} modules={quillModules} />
+        <ReactQuill className="quill" value={content} onChange={setContent} modules={quillModules} />
 
-        <div>
+        <div className="new-post-btns">
           <button type="button" onClick={(e) => handleSubmit(e, false)}>
             Save Draft
           </button>
@@ -72,8 +78,6 @@ function NewPost() {
           </button>
         </div>
       </form>
-
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </div>
   );
 }

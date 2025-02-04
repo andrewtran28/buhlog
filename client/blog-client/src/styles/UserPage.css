@@ -1,0 +1,21 @@
+#user-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  font-size: 1.75rem;
+}
+
+.user-info h2 {
+  color: var(--link);
+  margin: 0;
+}
+
+.user-info p {
+  margin: 20px 40px;
+}
+
+.delete-input {
+  font-size: inherit;
+  margin-bottom: 20px;
+}

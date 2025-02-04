@@ -105,6 +105,7 @@ const createPost = asyncHandler(async (req, res) => {
       content: sanitizedContent,
       published: Boolean(req.body.published).valueOf(),
       userId: user.id,
+      updatedAt: new Date(),
     },
   });
 

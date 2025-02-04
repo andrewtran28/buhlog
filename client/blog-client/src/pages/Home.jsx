@@ -58,8 +58,6 @@ const Home = () => {
       };
 
       fetchDrafts();
-    } else {
-      setLoadingDrafts(false);
     }
   }, [user, token]);
 
@@ -104,8 +102,8 @@ const Home = () => {
             <hr />
             <div>
               <h2>Your Drafts</h2>
-              {!loadingDrafts && drafts.length === 0 ? (
-                <p>No draft posts available.</p>
+              {drafts.length === 0 ? (
+                <p>There are no drafts.</p>
               ) : loadingDrafts ? (
                 <p>Loading drafts...</p>
               ) : (

@@ -19,3 +19,7 @@
   font-size: inherit;
   margin-bottom: 20px;
 }
+
+#user-page button {
+  margin-right: 10px;
+}

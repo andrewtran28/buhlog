@@ -26,25 +26,20 @@ const logInUser = asyncHandler(async (req, res) => {
     where: { username: username },
   });
   if (!user) {
-    throw new CustomError(401, "Invalid username or password.");
+    console.error(`Login failed: User does not exist (${username})`);
+    return res.status(401).json({ message: "Invalid username or password." });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new CustomError(401, "Invalid username or password.");
+    console.error(`Login failed: Incorrect password for user (${username})`);
+    return res.status(401).json({ message: "Invalid username or password." });
   }
 
   const token = generateToken(user);
   const { password: _, ...userData } = user;
 
-  res
-    .cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict",
-    })
-    .status(200)
-    .json({ message: "Login successful." });
+  res.status(200).json({ message: "Login successful.", token });
 });
 
 const logOutUser = asyncHandler(async (req, res) => {

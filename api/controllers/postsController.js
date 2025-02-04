@@ -3,56 +3,84 @@ const prisma = new PrismaClient();
 const asyncHandler = require("express-async-handler");
 const CustomError = require("../utils/customError");
 const { handleValidationErrors } = require("../utils/validator");
+const DOMPurify = require("isomorphic-dompurify");
 
-function formatDate(date) {
-  if (!date || isNaN(date.getTime())) {
-    return ""; // Return an empty string or handle the error appropriately
+const getAllPosts = asyncHandler(async (req, res) => {
+  const posts = await prisma.post.findMany({
+    where: { published: true },
+    include: {
+      comments: true,
+      user: {
+        select: { username: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  posts.forEach((post) => {
+    post.author = post.user.username;
+    delete post.user;
+  });
+
+  if (!posts || posts.length === 0) {
+    throw new CustomError(404, "No posts have been published.");
   }
 
-  const options = { month: "short" };
-  const month = new Intl.DateTimeFormat("en-US", options).format(date);
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const ampm = date.getHours() < 12 ? "AM" : "PM";
+  res.status(200).json(posts);
+});
 
-  const timezone = new Intl.DateTimeFormat("en-US", { timeZoneName: "short" }).format(date).split(" ").pop();
+const getAllDrafts = asyncHandler(async (req, res) => {
+  const drafts = await prisma.post.findMany({
+    where: { published: false, userId: req.user.id },
+    orderBy: { createdAt: "desc" },
+  });
 
-  return `${month} ${day}, ${year} @ ${hours}:${minutes}${ampm} ${timezone}`;
-}
+  if (!drafts || drafts.length === 0) {
+    return;
+  }
 
-async function findPostByTitle(postTitle) {
+  res.status(200).json(drafts);
+});
+
+const getPostByTitle = asyncHandler(async (req, res) => {
+  const postTitle = decodeURIComponent(req.params.postTitle);
   const post = await prisma.post.findUnique({
     where: { title: postTitle },
+    include: {
+      comments: true,
+      user: {
+        select: { username: true },
+      },
+    },
   });
 
   if (!post) {
     throw new CustomError(404, "Post not found.");
   }
 
-  return post;
-}
+  post.author = post.user.username;
+  delete post.user;
 
-const getAllPosts = asyncHandler(async (req, res) => {
-  const posts = await prisma.post.findMany({ where: { published: true } });
-
-  if (!posts || posts.length === 0) {
-    throw new CustomError(404, "No posts have been published.");
-  }
-
-  const formattedPosts = posts.map((post) => ({
-    ...post,
-    createdAt: formatDate(post.createdAt),
-    updatedAt: formatDate(post.updatedAt),
-  }));
-
-  res.status(200).json(formattedPosts);
+  res.status(200).json(post);
 });
 
-const getPostByTitle = asyncHandler(async (req, res) => {
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await findPostByTitle(postTitle);
+const getPostById = asyncHandler(async (req, res) => {
+  const postId = parseInt(req.params.postId);
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: {
+      user: {
+        select: { username: true },
+      },
+    },
+  });
+
+  if (!post) {
+    throw new CustomError(404, "Post not found.");
+  }
+
+  post.author = post.user.username;
+  delete post.user;
 
   res.status(200).json(post);
 });
@@ -60,10 +88,7 @@ const getPostByTitle = asyncHandler(async (req, res) => {
 const createPost = asyncHandler(async (req, res) => {
   handleValidationErrors(req);
 
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-  });
-
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user) {
     throw new CustomError(404, "User could not be found or does not exist.");
   }
@@ -72,10 +97,12 @@ const createPost = asyncHandler(async (req, res) => {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
+  const sanitizedContent = DOMPurify.sanitize(req.body.content);
+
   await prisma.post.create({
     data: {
       title: req.body.title,
-      content: req.body.content,
+      content: sanitizedContent,
       published: Boolean(req.body.published).valueOf(),
       userId: user.id,
     },
@@ -85,143 +112,56 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 const deletePost = asyncHandler(async (req, res) => {
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-  });
-
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.isAuthor) {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
   await prisma.post.delete({
-    where: { id: parseInt(req.params.postId) },
+    where: { title: req.params.postTitle },
   });
 
-  res.status(200).json({ message: "Post was successfully delted." });
+  res.status(200).json({ message: "Post was successfully deleted." });
 });
 
 const editPost = asyncHandler(async (req, res) => {
   handleValidationErrors(req);
 
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-  });
-
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.isAuthor) {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await findPostByTitle(postTitle);
-
-  await prisma.post.update({
-    where: { id: parseInt(post.id) },
-    data: {
-      title: req.body.title,
-      content: req.body.content,
-      published: Boolean(req.body.published).valueOf(),
-      updatedAt: new Date(),
-    },
-  });
-
-  res.status(200).json({ message: `Post: ${post.title} was successfully edited.` });
-});
-
-const getComments = asyncHandler(async (req, res) => {
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await findPostByTitle(postTitle);
-
-  const comments = await prisma.comment.findMany({
-    where: { postId: post.id },
-  });
-
-  res.status(201).json(comments);
-});
-
-const createComment = asyncHandler(async (req, res) => {
-  handleValidationErrors(req);
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await findPostByTitle(postTitle);
-
+  const postId = parseInt(req.params.postId);
+  const post = await prisma.post.findUnique({ where: { id: postId } });
   if (!post) {
     throw new CustomError(404, "Post not found.");
   }
 
-  await prisma.comment.create({
+  if (post.userId !== user.id) {
+    throw new CustomError(403, "You are not the author of this post.");
+  }
+
+  const isPublishing = req.body.published === true && post.published === false;
+  const updatedPost = await prisma.post.update({
+    where: { id: postId },
     data: {
-      text: req.body.text,
-      userId: req.user.id,
-      postId: post.id,
+      title: req.body.title || post.title,
+      content: req.body.content || post.content,
+      published: req.body.published === undefined ? post.published : Boolean(req.body.published),
+      createdAt: isPublishing ? new Date() : post.createdAt, // Update only if publishing
     },
   });
 
-  res.status(201).json({ message: "Comment created successfully." });
-});
-
-const editComment = asyncHandler(async (req, res) => {
-  handleValidationErrors(req);
-
-  const commentId = parseInt(req.params.commentId, 10);
-  if (isNaN(commentId)) {
-    throw new CustomError(400, "Invalid comment ID.");
-  }
-
-  const comment = await prisma.comment.findUnique({
-    where: { id: commentId },
-  });
-
-  if (!comment) {
-    throw new CustomError(404, "Comment not found.");
-  }
-
-  if (comment.userId !== req.user.id) {
-    throw new CustomError(403, "You are not authorized to edit this comment.");
-  }
-
-  await prisma.comment.update({
-    where: { id: commentId },
-    data: {
-      text: req.body.text,
-      updatedAt: new Date(),
-    },
-  });
-
-  res.status(201).json({ message: "Comment successfully edited." });
-});
-
-const deleteComment = asyncHandler(async (req, res) => {
-  const commentId = parseInt(req.params.commentId, 10);
-  if (isNaN(commentId)) {
-    throw new CustomError(400, "Invalid comment ID.");
-  }
-
-  const comment = await prisma.comment.findUnique({
-    where: { id: commentId },
-  });
-
-  if (!comment) {
-    throw new CustomError(404, "Comment not found.");
-  }
-
-  if (comment.userId !== req.user.id) {
-    throw new CustomError(403, "You are not authorized to delete this comment.");
-  }
-
-  await prisma.comment.delete({
-    where: { id: commentId },
-  });
-
-  res.status(200).json({ message: "Comment deleted successfully." });
+  res.status(200).json({ message: `Post: ${updatedPost.title} was successfully edited.`, post: updatedPost });
 });
 
 module.exports = {
   getAllPosts,
+  getAllDrafts,
   getPostByTitle,
+  getPostById,
   createPost,
   deletePost,
   editPost,
-  getComments,
-  createComment,
-  editComment,
-  deleteComment,
 };

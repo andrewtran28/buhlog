@@ -7,11 +7,9 @@ const prisma = new PrismaClient();
 
 //Generate JWT Token
 const generateToken = (user) => {
-  return jwt.sign(
-    { id: user.id, username: user.username }, //Payload
-    process.env.JWT_SECRET,
-    { expiresIn: 3 * (24 * 60 * 60 * 1000) } //ms (3 days)
-  );
+  return jwt.sign({ id: user.id, username: user.username, isAuthor: user.isAuthor }, process.env.JWT_SECRET, {
+    expiresIn: 3 * (24 * 60 * 60 * 1000), //ms (3 days)
+  }); 
 };
 
 //Passport JWT Strategy Options

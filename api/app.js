@@ -11,7 +11,7 @@ const postsRouter = require("./routes/postsRouter");
 
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, methods: ["GET", "POST", "PUT", "DELETE"], credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +24,7 @@ configurePassport(passport);
 //Routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/posts", postsRouter);
+app.use("/api/post", postsRouter);
 
 //Error handling middleware
 app.use((err, req, res, next) => {
@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
 });
 
 //Start Express server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on: http://localhost:${PORT}`);
 });

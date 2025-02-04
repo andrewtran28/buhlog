@@ -5,7 +5,7 @@ const { signupValidator } = require("../utils/validator");
 const { authenticateToken } = require("../utils/auth");
 
 //User Routing
-//usersRouter.get("/:userId", authenticateToken, usersController.getUserPage)
+usersRouter.get("/", authenticateToken, usersController.getUserInfo);
 usersRouter.post("/", signupValidator, usersController.createUser);
 usersRouter.delete("/", authenticateToken, usersController.deleteUser);
 

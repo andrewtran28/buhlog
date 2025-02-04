@@ -23,23 +23,31 @@ const signupValidator = [
     .withMessage("Username must be between 1-25 characters.")
     .bail(),
   body("password").trim().isLength({ min: 6, max: 50 }).withMessage("Password must be between 6-50 characters.").bail(),
+  body("confirmPassword")
+    .trim()
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match.");
+      }
+      return true;
+    }),
 ];
 
 const postValidator = [
   body("title")
     .trim()
     .notEmpty()
-    .custom(async (postTitle) => {
+    .isLength({ min: 1, max: 50 })
+    .withMessage("Title must be between 1-50 characters.")
+    .custom(async (postTitle, { req }) => {
       const post = await prisma.post.findUnique({
         where: { title: postTitle },
       });
 
-      if (post) {
+      if (post && post.id !== parseInt(req.params.postId)) {
         throw new Error("Title already exists within the blog.");
       }
     })
-    .isLength({ max: 50 })
-    .withMessage("Title must be between 1-50 characters.")
     .bail(),
   body("content").trim().notEmpty().bail(),
 ];
@@ -53,7 +61,7 @@ const handleValidationErrors = (req) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
     const errorMessages = result.errors.map((err) => (err.param ? `${err.msg} (${err.param})` : err.msg));
-    throw new CustomError(401, `Validation failed: ${errorMessages.join(", ")}`);
+    throw new CustomError(401, `${errorMessages.join(" ")}`);
   }
 };
 

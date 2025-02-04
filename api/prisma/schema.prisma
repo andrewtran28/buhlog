@@ -35,13 +35,13 @@ model User {
 model Post {
   id        Int       @id @default(autoincrement())
   title     String    @unique
-  content   String
+  content   String    @db.Text
   userId    Int
   user      User      @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[] @relation("PostComments")
   published Boolean   @default(false)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  
+  updatedAt DateTime  @updatedAt
 
   @@map("posts")
 }
@@ -54,7 +54,7 @@ model Comment {
   user      User      @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
   post      Post      @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  
+  updatedAt DateTime  @updatedAt
 
   @@map("comments")
 }

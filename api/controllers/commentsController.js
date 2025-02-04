@@ -44,6 +44,7 @@ const createComment = asyncHandler(async (req, res) => {
       text: req.body.text,
       userId: req.user.id,
       postId: post.id,
+      updatedAt: new Date(),
     },
   });
 

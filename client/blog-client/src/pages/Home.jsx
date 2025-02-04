@@ -102,13 +102,12 @@ const Home = () => {
         {user?.isAuthor && (
           <>
             <hr />
-
             <div>
               <h2>Your Drafts</h2>
-              {loadingDrafts ? (
-                <p>Loading drafts...</p>
-              ) : drafts.length === 0 ? (
+              {!loadingDrafts && drafts.length === 0 ? (
                 <p>No draft posts available.</p>
+              ) : loadingDrafts ? (
+                <p>Loading drafts...</p>
               ) : (
                 <div className="draft-posts">
                   {drafts.map((draft) => (

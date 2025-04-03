@@ -59,7 +59,7 @@ const createUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   const { password } = req.body;
   if (!req.user || !password) {
-    return res.status(400).json({ message: "Password are required." });
+    return res.status(400).json({ message: "Password is required." });
   }
 
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });

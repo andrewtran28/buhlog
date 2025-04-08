@@ -1,7 +1,7 @@
 from flask import jsonify, g
 from app.models import User
 import bcrypt
-from app.auth_utils import generate_token
+from app.utils.auth_utils import generate_token
 
 
 def get_current_user():

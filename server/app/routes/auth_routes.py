@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from app.controllers import auth_controller
-from app.auth_utils import jwt_user_required
+from app.utils.auth_utils import jwt_user_required
 
 auth_bp = Blueprint("auth", __name__)
 

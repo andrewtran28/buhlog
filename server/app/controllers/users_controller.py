@@ -2,7 +2,7 @@ from flask import jsonify, g
 from app.models import User
 from app import db
 import bcrypt
-from app.auth_utils import generate_token
+from app.utils.auth_utils import generate_token
 
 
 def create_user(data):

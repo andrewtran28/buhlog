@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.controllers import users_controller
-from app.utils.validator import (
+from app.utils.validators import (
     signup_validator,
     handle_validation_errors,
     ValidationError,

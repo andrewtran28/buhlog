@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from app.controllers import posts_controller
 from app.controllers import comments_controller
-from app.auth_utils import jwt_user_required
+from app.utils.auth_utils import jwt_user_required
 from app.utils.validators import (
     post_validator,
     comment_validator,

@@ -29,6 +29,14 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return str(self.id)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "isAuthor": self.is_author,
+            "createdAt": self.created_at.isoformat(),
+        }
+
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -36,8 +44,9 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, unique=True, nullable=False)
     content = db.Column(db.Text, nullable=False)
+    # Map the Python attribute "user_id" to the database column "userId"
     user_id = db.Column(
-        db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        db.Integer, db.ForeignKey("users.id"), nullable=False, name="userId"
     )
     published = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -56,11 +65,19 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.String(300), nullable=False)
+    # Map to database column "userId"
     user_id = db.Column(
-        db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        name="userId",
     )
+    # Map to database column "postId"
     post_id = db.Column(
-        db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE"), nullable=False
+        db.Integer,
+        db.ForeignKey("posts.id", ondelete="CASCADE"),
+        nullable=False,
+        name="postId",
     )
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(

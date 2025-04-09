@@ -2,7 +2,7 @@ from flask import jsonify, g
 from app.models import User
 from app import db
 import bcrypt
-from app.utils.auth_utils import generate_token
+from app.utils.auth_utils import generate_token, jwt_user_required
 
 
 def create_user(data):
@@ -32,12 +32,25 @@ def login(data):
     return jsonify({"message": "Invalid credentials"}), 401
 
 
+@jwt_user_required
 def get_user_info():
     user = g.current_user
-    return (
-        jsonify({"id": user.id, "username": user.username, "isAuthor": user.is_author}),
-        200,
-    )
+
+    published_posts_count = len([post for post in user.posts if post.published])
+    drafts_count = len(user.posts) - published_posts_count
+    comments_count = len(user.comments)
+    is_author = published_posts_count > 0
+
+    user_data = {
+        "id": user.id,
+        "username": user.username,
+        "isAuthor": is_author,
+        "posts": published_posts_count,
+        "drafts": drafts_count,
+        "comments": comments_count,
+    }
+
+    return jsonify(user_data), 200
 
 
 def delete_user():

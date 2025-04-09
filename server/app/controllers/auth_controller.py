@@ -1,13 +1,13 @@
 from flask import jsonify, g
 from app.models import User
 import bcrypt
-from app.utils.auth_utils import generate_token
+from app.utils.auth_utils import generate_token, jwt_user_required
 
 
+@jwt_user_required
 def get_current_user():
     user = g.current_user
-    user_data = {"id": user.id, "username": user.username, "isAuthor": user.is_author}
-    return jsonify({"success": True, "user": user_data}), 200
+    return jsonify({"success": True, "user": user.to_dict()}), 200
 
 
 def login_user(data):

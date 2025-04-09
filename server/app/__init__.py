@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -16,11 +16,18 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("config.Config")
 
+    # Disable strict slashes so that a missing slash doesn't cause a redirect
+    app.url_map.strict_slashes = False
+
     # Setup Extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app)
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": os.getenv("FRONTEND_URL", "*")}},
+        supports_credentials=True,
+    )
 
     # Ensure model is loaded before migration
     from app.models import User
@@ -32,6 +39,15 @@ def create_app():
 
     app.register_blueprint(user_bp, url_prefix="/api/users")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
-    app.register_blueprint(posts_bp, url_prefix="/api/posts")
+    app.register_blueprint(posts_bp, url_prefix="/api/post")
+
+    # Error handlers returning JSON responses
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return jsonify({"error": "Not found"}), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({"error": "Internal server error"}), 500
 
     return app

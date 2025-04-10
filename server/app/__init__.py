@@ -15,6 +15,7 @@ def create_app():
     load_dotenv()
     app = Flask(__name__)
     app.config.from_object("config.Config")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
     # Disable strict slashes so that a missing slash doesn't cause a redirect
     app.url_map.strict_slashes = False
@@ -30,7 +31,7 @@ def create_app():
     )
 
     # Ensure model is loaded before migration
-    from app.models import User
+    from app.models import User, Post, Comment, Session
 
     # Import and register blueprints
     from app.routes.user_routes import user_bp

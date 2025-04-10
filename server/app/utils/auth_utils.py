@@ -15,7 +15,6 @@ def generate_token(user):
         additional_claims=additional_claims,
         expires_delta=timedelta(days=3),
     )
-    print(f"\nGenerated JWT for user '{user.username}':\n{token}\n")
     return token
 
 

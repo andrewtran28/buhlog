@@ -21,7 +21,6 @@ function UserPage() {
         });
 
         const data = await response.json();
-
         if (response.ok) {
           setUserInfo(data);
         } else {

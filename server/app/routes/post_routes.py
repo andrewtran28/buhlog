@@ -60,7 +60,7 @@ def delete_post(post_id):
 # Comments Routing
 @posts_bp.route("/<string:post_title>/comments", methods=["GET"])
 def get_comments(post_title):
-    return posts_controller.get_comments(post_title)
+    return comments_controller.get_comments(post_title)
 
 
 @posts_bp.route("/<string:post_title>/comments", methods=["POST"])
@@ -69,7 +69,7 @@ def create_comment(post_title):
     data = request.get_json()
     errors = comment_validator(data)
     handle_validation_errors(errors)
-    return posts_controller.create_comment(post_title, data)
+    return comments_controller.create_comment(post_title, data)
 
 
 @posts_bp.route("/<string:post_title>/comments/<int:comment_id>", methods=["PUT"])
@@ -78,10 +78,10 @@ def edit_comment(post_title, comment_id):
     data = request.get_json()
     errors = comment_validator(data)
     handle_validation_errors(errors)
-    return posts_controller.edit_comment(post_title, comment_id, data)
+    return comments_controller.edit_comment(post_title, comment_id, data)
 
 
 @posts_bp.route("/<string:post_title>/comments/<int:comment_id>", methods=["DELETE"])
 @jwt_user_required
 def delete_comment(post_title, comment_id):
-    return posts_controller.delete_comment(post_title, comment_id)
+    return comments_controller.delete_comment(post_title, comment_id)

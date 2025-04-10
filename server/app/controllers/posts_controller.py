@@ -8,8 +8,9 @@ from bleach import clean
 
 def get_all_posts():
     posts = Post.query.filter_by(published=True).order_by(Post.created_at.desc()).all()
-    if not posts:
-        return jsonify({"error": "No posts have been published."}), 404
+
+    if not posts or len(posts) == 0:
+        return jsonify([]), 200
 
     result = []
     for post in posts:

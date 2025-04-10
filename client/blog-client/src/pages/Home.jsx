@@ -80,7 +80,7 @@ const Home = () => {
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
         {posts.length === 0 ? (
-          <p>No posts available.</p>
+          <p>No posts have been published.</p>
         ) : (
           <div className="latest-posts">
             {posts.map((post) => (

@@ -23,9 +23,9 @@ def get_all_drafts():
     return posts_controller.get_all_drafts()
 
 
-@posts_bp.route("/<string:post_title>", methods=["GET"])
-def get_post_by_title(post_title):
-    return posts_controller.get_post_by_title(post_title)
+@posts_bp.route("/<string:post_slug>", methods=["GET"])
+def get_post_by_slug(post_slug):
+    return posts_controller.get_post_by_slug(post_slug)
 
 
 @posts_bp.route("/", methods=["POST"])

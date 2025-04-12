@@ -59,8 +59,10 @@ function EditPost() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+
         if (post.published) {
-          navigate(`/post/${updatedTitle}`);
+          navigate(`/post/${data.post.slug}`);
         } else {
           navigate("/");
         }

@@ -4,6 +4,7 @@ from app.models import Post, User, Comment
 from flask_jwt_extended import get_jwt_identity
 from datetime import datetime
 from bleach import clean
+from app.utils.slugify import generate_unique_slug
 
 
 def get_all_posts():
@@ -18,6 +19,7 @@ def get_all_posts():
             {
                 "id": post.id,
                 "title": post.title,
+                "slug": post.slug,
                 "content": post.content,
                 "published": post.published,
                 "author": post.user.username,
@@ -60,8 +62,8 @@ def get_all_drafts():
     )
 
 
-def get_post_by_title(post_title):
-    post = Post.query.filter_by(title=post_title).first()
+def get_post_by_slug(slug):
+    post = Post.query.filter_by(slug=slug).first()
     if not post:
         return jsonify({"error": "Post not found."}), 404
 
@@ -113,8 +115,13 @@ def create_post(data):
 
     sanitized_content = clean(data.get("content", ""))
 
+    # Generate a unique slug for the post
+    title = data.get("title", "")
+    slug = generate_unique_slug(title, db.session)
+
     post = Post(
-        title=data.get("title"),
+        title=title,
+        slug=slug,  # Set the slug here
         content=sanitized_content,
         published=bool(data.get("published", False)),
         user_id=user.id,
@@ -160,11 +167,20 @@ def edit_post(post_id, data):
     if post.user_id != user.id:
         return jsonify({"error": "You are not the author of this post."}), 403
 
-    is_publishing = data.get("published") is True and not post.published
+    new_title = data.get("title", post.title)
+    new_content = data.get("content", post.content)
+    new_published = data.get("published", post.published)
 
-    post.title = data.get("title", post.title)
-    post.content = data.get("content", post.content)
-    post.published = data.get("published", post.published)
+    is_publishing = new_published is True and not post.published
+
+    # If title changed, regenerate slug
+    if new_title != post.title:
+        post.title = new_title
+        post.slug = generate_unique_slug(new_title, db.session)
+
+    post.content = new_content
+    post.published = new_published
+
     if is_publishing:
         post.created_at = datetime.utcnow()
 
@@ -177,6 +193,7 @@ def edit_post(post_id, data):
                 "post": {
                     "id": post.id,
                     "title": post.title,
+                    "slug": post.slug,
                     "content": post.content,
                     "published": post.published,
                     "createdAt": post.created_at,

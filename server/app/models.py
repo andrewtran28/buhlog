@@ -66,6 +66,7 @@ class Post(db.Model):
         nullable=False,
         name="updatedAt",
     )  # Prisma: updatedAt
+    slug = db.Column(db.String(255), unique=True, nullable=False)
 
     user = db.relationship("User", back_populates="posts")
     comments = db.relationship(

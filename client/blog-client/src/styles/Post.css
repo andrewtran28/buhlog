@@ -63,7 +63,7 @@
 .comment {
   display: flex;
   flex-direction: column;
-  margin: 40px 0;
+  margin: 30px 0;
   position: relative;
 }
 
@@ -87,7 +87,8 @@
   margin-top: 10px;
 }
 
-.comment-text, .comment-edit {
+.comment-text,
+.comment-edit {
   margin-top: 10px;
 }
 
@@ -97,5 +98,3 @@
   display: flex;
   width: calc(100% - 2px);
 }
-
-

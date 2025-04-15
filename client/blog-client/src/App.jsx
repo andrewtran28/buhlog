@@ -23,7 +23,7 @@ const App = () => {
               <main>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/post/:postTitle" element={<Post />} />
+                  <Route path="/post/:postSlug" element={<Post />} />
                   <Route path="/post/:postId/edit" element={<ProtectedRoute element={<EditPost />} />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />

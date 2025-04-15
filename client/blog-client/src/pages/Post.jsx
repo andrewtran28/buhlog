@@ -6,8 +6,8 @@ import CommentsSection from "../components/CommentsSection";
 import "../styles/Post.css";
 
 function Post() {
-  const { postTitle } = useParams();
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post/${encodeURIComponent(postTitle)}`;
+  const { postSlug } = useParams();
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post/${encodeURIComponent(postSlug)}`;
   const navigate = useNavigate();
 
   const { user, token } = useAuth();
@@ -39,7 +39,7 @@ function Post() {
 
     fetchPost();
     fetchComments();
-  }, [postTitle]);
+  }, [postSlug]);
 
   const fetchComments = async () => {
     try {

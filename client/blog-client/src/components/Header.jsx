@@ -20,7 +20,8 @@ function Header() {
           {user ? (
             <div className="header-right">
               <span>
-                Hello, <Link to={`/users`}>{user.username}</Link>
+                <span id="hello">Hello, </span>
+                <Link to={`/users`}>{user.username}</Link>
               </span>
               <div>
                 <Link to={`/users`}>

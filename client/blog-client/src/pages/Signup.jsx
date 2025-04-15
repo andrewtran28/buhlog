@@ -43,13 +43,21 @@ function Signup() {
       <h1 id="title">Sign Up</h1>
       <form onSubmit={handleSignup}>
         <label>Username:</label>
-        <input name="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <input
+          name="username"
+          type="text"
+          value={username}
+          maxLength={25}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
 
         <label>Password:</label>
         <input
           name="password"
           type="password"
           value={password}
+          maxLength={50}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
@@ -59,6 +67,7 @@ function Signup() {
           name="confirmPassword"
           type="password"
           value={confirmPassword}
+          maxLength={50}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />

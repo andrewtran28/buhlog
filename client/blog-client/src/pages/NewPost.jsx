@@ -62,6 +62,7 @@ function NewPost() {
           className="title-input"
           type="text"
           value={title}
+          maxLength={100}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
           required

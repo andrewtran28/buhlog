@@ -84,7 +84,7 @@ function UserPage() {
               userInfo.isAuthor ? (
                 <>
                   <p>
-                    Role: <span style={{ color: "red" }}>Author</span>
+                    Role: <span style={{ fontWeight: "600", color: "#ff124a" }}>Author</span>
                   </p>
                   <p>
                     Posts: {userInfo.posts} | Drafts: {userInfo.drafts}
@@ -109,27 +109,36 @@ function UserPage() {
       )}
 
       <div className="delete-form">
-        {!showDeleteForm && <button onClick={() => setShowDeleteForm(true)}>Delete Account</button>}
+        {!showDeleteForm && (
+          <button className="danger" onClick={() => setShowDeleteForm(true)}>
+            Delete Account
+          </button>
+        )}
 
         {showDeleteForm && (
           <>
             <hr />
             <form onSubmit={handleDeleteAccount}>
-              <h2>Confirm Account Deletion</h2>
-              <p>Enter your password to delete your account.</p>
-              <input
-                className="delete-input"
-                type="password"
-                placeholder="Your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <div>
-                <button type="submit">Delete Account</button>
-                <button type="button" onClick={handleCancel}>
-                  Cancel
-                </button>
+              <h2 className="delete-confirm">Confirm Account Deletion</h2>
+              <div className="delete-cont">
+                <p>Enter your password to delete your account.</p>
+                <input
+                  className="delete-input"
+                  type="password"
+                  placeholder="Your password"
+                  value={password}
+                  maxLength={50}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <div>
+                  <button className="danger" type="submit">
+                    Delete Account
+                  </button>
+                  <button type="button" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             </form>
           </>

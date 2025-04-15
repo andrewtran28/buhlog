@@ -1,12 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 
 body {
   --background: #f3f3f3;
   --font-dark: #2f2620;
-  --font-light: #E0E5E9;
-  --accent: #f3D849;
-  --link: #0A62D0;
+  --font-light: #e0e5e9;
+  --accent: #f3d849;
+  --link: #0a62d0;
   --header: #191718;
+  --danger: #ff124a;
 
   background-color: var(--background);
   font-family: "Outfit", Arial, sans-serif;
@@ -23,8 +24,8 @@ body {
 
 #title {
   font-size: 4rem;
-  line-height: 4rem;;
-  margin: 30px 0 10px 0;
+  line-height: 4rem;
+  margin: 20px 0;
 }
 
 main {
@@ -34,7 +35,7 @@ main {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
-
+  padding: 0 10px;
 }
 
 section {
@@ -84,4 +85,29 @@ button:active {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+}
+
+.danger {
+  color: var(--font-light);
+  background-color: var(--danger);
+}
+.danger:hover {
+  background-color: #d2002e;
+}
+.danger:active {
+  background-color: #9e002a;
+}
+
+@media (max-width: 800px) {
+  #title {
+    font-size: 3.5rem;
+    line-height: 3.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  #title {
+    font-size: 3rem;
+    line-height: 3rem;
+  }
 }

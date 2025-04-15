@@ -102,7 +102,7 @@ function EditPost() {
   }
 
   return (
-    <div>
+    <div id="new-post">
       <h1 id="title">Edit Post</h1>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
@@ -111,6 +111,7 @@ function EditPost() {
           className="title-input"
           type="text"
           value={updatedTitle}
+          maxLength={100}
           onChange={(e) => setUpdatedTitle(e.target.value)}
           placeholder="Title"
         />
@@ -124,9 +125,12 @@ function EditPost() {
           <button type="button" onClick={(e) => handleSubmit(e, !post.published)}>
             {post.published ? "Unpublish" : "Publish"}
           </button>
+
+          <button className="danger" onClick={handleDeletePost}>
+            Delete Post
+          </button>
         </div>
       </form>
-      <button onClick={handleDeletePost}>Delete Post</button>
     </div>
   );
 }

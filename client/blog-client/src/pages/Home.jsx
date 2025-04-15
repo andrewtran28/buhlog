@@ -5,7 +5,7 @@ import { formatDate } from "../utils/FormatDate";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const POSTS_PER_PAGE = 5;
+const POSTS_PER_PAGE = 3;
 
 const Home = () => {
   const { user, token } = useAuth();
@@ -74,11 +74,9 @@ const Home = () => {
       <div className="home-header">
         <h1 id="title">Latest Articles</h1>
         {user?.isAuthor && (
-          <div>
-            <Link to="/new-post">
-              <button>+ Create New Post</button>
-            </Link>
-          </div>
+          <Link to="/new-post">
+            <button>+ Create New Post</button>
+          </Link>
         )}
       </div>
 
@@ -108,14 +106,16 @@ const Home = () => {
               <button onClick={() => setCurrentPage((prev) => prev + 1)}>Older Posts ➡</button>
             )}
           </div>
+          <br />
         </>
       )}
 
       {user?.isAuthor && (
         <>
           <hr />
-          <div>
-            <h2>Your Drafts</h2>
+
+          <h2 className="draft-header">Your Drafts</h2>
+          <div className="draft-cont">
             {drafts.length === 0 ? (
               <p>There are no drafts.</p>
             ) : loadingDrafts ? (

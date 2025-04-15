@@ -50,7 +50,7 @@ class Post(db.Model):
     __tablename__ = "posts"  # Prisma: @@map("posts")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String, unique=True, nullable=False)
+    title = db.Column(db.String(100), unique=True, nullable=False)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False, name="userId"
@@ -78,7 +78,7 @@ class Comment(db.Model):
     __tablename__ = "comments"  # Prisma: @@map("comments")
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    text = db.Column(db.String(300), nullable=False)
+    text = db.Column(db.String(500), nullable=False)
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id", ondelete="CASCADE"),

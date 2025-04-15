@@ -98,7 +98,6 @@ const createPost = asyncHandler(async (req, res) => {
 
   const sanitizedContent = DOMPurify.sanitize(req.body.content);
   const slug = await generateUniqueSlug(req.body.title);
-
   const createdPost = await prisma.post.create({
     data: {
       title: req.body.title,

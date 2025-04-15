@@ -1,5 +1,3 @@
-# scripts/reslugify_posts.py
-
 import sys
 import os
 

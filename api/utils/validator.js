@@ -37,8 +37,8 @@ const postValidator = [
   body("title")
     .trim()
     .notEmpty()
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Title must be between 1-50 characters.")
+    .isLength({ min: 1, max: 100 })
+    .withMessage("Title must be between 1-100 characters.")
     .custom(async (postTitle, { req }) => {
       const post = await prisma.post.findUnique({
         where: { title: postTitle },

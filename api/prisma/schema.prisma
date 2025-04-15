@@ -29,7 +29,7 @@ model User {
 
 model Post {
   id        Int       @id @default(autoincrement())
-  title     String    @unique
+  title     String    @unique @db.VarChar(100)
   slug      String    @unique @db.VarChar(100)
   content   String    @db.Text
   userId    Int
@@ -44,7 +44,7 @@ model Post {
 
 model Comment {
   id        Int       @id @default(autoincrement())
-  text      String    @db.VarChar(300)
+  text      String    @db.VarChar(500)
   userId    Int
   postId    Int
   user      User      @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)

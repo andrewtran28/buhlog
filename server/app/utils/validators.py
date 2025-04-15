@@ -48,8 +48,8 @@ def post_validator(data, post_id=None):
 
     if not title:
         errors.append("Title is required. (title)")
-    elif not (1 <= len(title) <= 50):
-        errors.apend("Title must be between 1-50 characters. (title)")
+    elif not (1 <= len(title) <= 100):
+        errors.apend("Title must be between 1-100 characters. (title)")
     else:
         existing_post = Post.query.filter_by(title=title).first()
         if existing_post and (post_id is None or existing_post.id != post_id):

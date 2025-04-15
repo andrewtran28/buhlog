@@ -78,7 +78,7 @@ def edit_comment(comment_id):
     data = request.get_json()
     errors = comment_validator(data)
     handle_validation_errors(errors)
-    return comments_controller.edit_comment(post_slug, comment_id, data)
+    return comments_controller.edit_comment(comment_id, data)
 
 
 @posts_bp.route("/<string:post_slug>/comments/<int:comment_id>", methods=["DELETE"])

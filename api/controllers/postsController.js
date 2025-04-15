@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const asyncHandler = require("express-async-handler");
 const CustomError = require("../utils/customError");
 const { handleValidationErrors } = require("../utils/validator");
+const { generateUniqueSlug } = require("../utils/slugify");
 const DOMPurify = require("isomorphic-dompurify");
 
 const getAllPosts = asyncHandler(async (req, res) => {
@@ -42,15 +43,13 @@ const getAllDrafts = asyncHandler(async (req, res) => {
   res.status(200).json(drafts);
 });
 
-const getPostByTitle = asyncHandler(async (req, res) => {
-  const postTitle = decodeURIComponent(req.params.postTitle);
+const getPostBySlug = asyncHandler(async (req, res) => {
+  const slug = req.params.postSlug;
   const post = await prisma.post.findUnique({
-    where: { title: postTitle },
+    where: { slug },
     include: {
       comments: true,
-      user: {
-        select: { username: true },
-      },
+      user: { select: { username: true } },
     },
   });
 
@@ -98,10 +97,12 @@ const createPost = asyncHandler(async (req, res) => {
   }
 
   const sanitizedContent = DOMPurify.sanitize(req.body.content);
+  const slug = await generateUniqueSlug(req.body.title);
 
-  await prisma.post.create({
+  const createdPost = await prisma.post.create({
     data: {
       title: req.body.title,
+      slug,
       content: sanitizedContent,
       published: Boolean(req.body.published).valueOf(),
       userId: user.id,
@@ -109,7 +110,7 @@ const createPost = asyncHandler(async (req, res) => {
     },
   });
 
-  res.status(200).json({ message: "Post created." });
+  res.status(200).json({ message: "Post created.", post: createdPost });
 });
 
 const deletePost = asyncHandler(async (req, res) => {
@@ -143,24 +144,37 @@ const editPost = asyncHandler(async (req, res) => {
     throw new CustomError(403, "You are not the author of this post.");
   }
 
+  const newTitle = req.body.title || post.title;
+  let newSlug = post.slug;
+
+  // Only generate a new slug if the title changed
+  if (newTitle !== post.title) {
+    newSlug = await generateUniqueSlug(newTitle, prisma);
+  }
+
   const isPublishing = req.body.published === true && post.published === false;
+
   const updatedPost = await prisma.post.update({
     where: { id: postId },
     data: {
-      title: req.body.title || post.title,
+      title: newTitle,
+      slug: newSlug,
       content: req.body.content || post.content,
       published: req.body.published === undefined ? post.published : Boolean(req.body.published),
-      createdAt: isPublishing ? new Date() : post.createdAt, // Update only if publishing
+      createdAt: isPublishing ? new Date() : post.createdAt,
     },
   });
 
-  res.status(200).json({ message: `Post: ${updatedPost.title} was successfully edited.`, post: updatedPost });
+  res.status(200).json({
+    message: `Post: ${updatedPost.title} was successfully edited.`,
+    post: updatedPost,
+  });
 });
 
 module.exports = {
   getAllPosts,
   getAllDrafts,
-  getPostByTitle,
+  getPostBySlug,
   getPostById,
   createPost,
   deletePost,

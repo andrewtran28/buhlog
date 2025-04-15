@@ -5,8 +5,8 @@ const CustomError = require("../utils/customError");
 const { handleValidationErrors } = require("../utils/validator");
 
 const getComments = asyncHandler(async (req, res) => {
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await prisma.post.findUnique({ where: { title: postTitle } });
+  const postSlug = decodeURIComponent(req.params.postSlug);
+  const post = await prisma.post.findUnique({ where: { slug: postSlug } });
 
   if (!post) {
     throw new CustomError(404, "Post not found.");
@@ -32,8 +32,9 @@ const getComments = asyncHandler(async (req, res) => {
 
 const createComment = asyncHandler(async (req, res) => {
   handleValidationErrors(req);
-  const postTitle = decodeURIComponent(req.params.postTitle);
-  const post = await prisma.post.findUnique({ where: { title: postTitle } });
+
+  const postSlug = decodeURIComponent(req.params.postSlug);
+  const post = await prisma.post.findUnique({ where: { slug: postSlug } });
 
   if (!post) {
     throw new CustomError(404, "Post not found.");

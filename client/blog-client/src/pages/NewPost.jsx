@@ -40,7 +40,7 @@ function NewPost() {
       const data = await response.json();
       if (response.ok) {
         if (isPublished) {
-          navigate(`/post/${encodeURIComponent(title)}`);
+          navigate(`/post/${data.post.slug}`);
         } else {
           navigate("/");
         }

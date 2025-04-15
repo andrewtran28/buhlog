@@ -8,15 +8,15 @@ const { postValidator, commentValidator } = require("../utils/validator");
 postsRouter.get("/", postsController.getAllPosts);
 postsRouter.get("/drafts", authenticateToken, postsController.getAllDrafts);
 
-postsRouter.get("/:postTitle", postsController.getPostByTitle);
+postsRouter.get("/:postSlug", postsController.getPostBySlug);
 postsRouter.post("/", authenticateToken, postValidator, postsController.createPost);
 postsRouter.get("/:postId/edit", postsController.getPostById);
 postsRouter.put("/:postId", authenticateToken, postValidator, postsController.editPost);
 postsRouter.delete("/:postId", authenticateToken, postsController.deletePost);
 
-postsRouter.get("/:postTitle/comments", commentsController.getComments);
-postsRouter.post("/:postTitle/comments", authenticateToken, commentValidator, commentsController.createComment);
-postsRouter.put("/:postTitle/comments/:commentId", authenticateToken, commentValidator, commentsController.editComment);
-postsRouter.delete("/:postTitle/comments/:commentId", authenticateToken, commentsController.deleteComment);
+postsRouter.get("/:postSlug/comments", commentsController.getComments);
+postsRouter.post("/:postSlug/comments", authenticateToken, commentValidator, commentsController.createComment);
+postsRouter.put("/:postSlug/comments/:commentId", authenticateToken, commentValidator, commentsController.editComment);
+postsRouter.delete("/:postSlug/comments/:commentId", authenticateToken, commentsController.deleteComment);
 
 module.exports = postsRouter;

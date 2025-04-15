@@ -30,6 +30,7 @@ model User {
 model Post {
   id        Int       @id @default(autoincrement())
   title     String    @unique
+  slug      String    @unique @db.VarChar(100)
   content   String    @db.Text
   userId    Int
   user      User      @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)

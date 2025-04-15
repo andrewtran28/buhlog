@@ -1,5 +1,5 @@
 {
-  "name": "blog-api",
+  "name": "buhlog",
   "version": "1.0.0",
   "description": "A blog website that contains both frontend and backend capabilties, set up with an API.",
   "main": "index.js",
@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrewtran28/blog-api.git"
+    "url": "git+https://github.com/andrewtran28/buhlog.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/andrewtran28/blog-api/issues"
+    "url": "https://github.com/andrewtran28/buhlog/issues"
   },
-  "homepage": "https://github.com/andrewtran28/blog-api#readme"
+  "homepage": "https://github.com/andrewtran28/buhlog#readme"
 }

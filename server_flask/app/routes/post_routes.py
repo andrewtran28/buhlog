@@ -74,7 +74,7 @@ def create_comment(post_slug):
 
 @posts_bp.route("/<string:post_slug>/comments/<int:comment_id>", methods=["PUT"])
 @jwt_user_required
-def edit_comment(comment_id):
+def edit_comment(post_slug, comment_id):
     data = request.get_json()
     errors = comment_validator(data)
     handle_validation_errors(errors)
@@ -83,5 +83,5 @@ def edit_comment(comment_id):
 
 @posts_bp.route("/<string:post_slug>/comments/<int:comment_id>", methods=["DELETE"])
 @jwt_user_required
-def delete_comment(comment_id):
+def delete_comment(post_slug, comment_id):
     return comments_controller.delete_comment(comment_id)

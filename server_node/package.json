@@ -4,7 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"
@@ -27,7 +31,8 @@
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "vite": "^6.2.6"
   },
   "devDependencies": {
     "prisma": "^6.3.0"

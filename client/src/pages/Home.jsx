@@ -5,7 +5,7 @@ import { formatDate } from "../utils/FormatDate";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const POSTS_PER_PAGE = 3;
+const POSTS_PER_PAGE = 8;
 
 const Home = () => {
   const { user, token } = useAuth();

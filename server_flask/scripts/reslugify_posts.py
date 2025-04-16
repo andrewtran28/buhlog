@@ -25,9 +25,9 @@ def reslugify_posts():
 
         if count > 0:
             db.session.commit()
-            print(f"✅ Updated {count} post slugs.")
+            print(f"Updated {count} post slugs.")
         else:
-            print("✅ All slugs are already up to date.")
+            print("All slugs are already up to date.")
 
 
 if __name__ == "__main__":

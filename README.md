@@ -17,7 +17,7 @@ This project's back-end framework was initially developed using Node.js and Expr
 - CSS
 - JavaScript
 - Node.js + Express
-- Python + Express
+- Python + Flask
 - Netlify (for hosting the static website)
 - Render (for hosting web server)
 - Neon DB (for hosting PSQL database)

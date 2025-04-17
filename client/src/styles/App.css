@@ -98,6 +98,23 @@ button:active {
   background-color: #9e002a;
 }
 
+.load-animation {
+  color: transparent;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect fill="%230A62D0" stroke="%230a62d0" stroke-width="10" width="30" height="30" x="25" y="85"><animate attributeName="opacity" calcMode="spline" dur="3" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4"></animate></rect><rect fill="%230a62d0" stroke="%230a62d0" stroke-width="10" width="30" height="30" x="85" y="85"><animate attributeName="opacity" calcMode="spline" dur="3" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2"></animate></rect><rect fill="%230a62d0" stroke="%230a62d0" stroke-width="10" width="30" height="30" x="145" y="85"><animate attributeName="opacity" calcMode="spline" dur="3" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0"></animate></rect></svg>');
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+}
+
+.loading h1 {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  background: radial-gradient(ellipse 100% 50%, var(--slate) 25%, rgba(0, 0, 0, 0) 100%);
+  padding: 20px;
+}
+.loading h1.show {
+  opacity: 1;
+}
+
 @media (max-width: 800px) {
   #title {
     font-size: 3.5rem;

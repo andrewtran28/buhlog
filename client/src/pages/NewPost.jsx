@@ -10,7 +10,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function NewPost() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");

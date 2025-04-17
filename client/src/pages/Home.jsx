@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate } from "../utils/FormatDate";
+import Loading from "../components/Loading";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -22,6 +23,8 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
+
       try {
         const response = await fetch(`${API_BASE_URL}/api/post`);
         const data = await response.json();
@@ -67,7 +70,7 @@ const Home = () => {
     }
   }, [user, token]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading loadMessage="Loading" />;
 
   return (
     <section id="home">
@@ -116,10 +119,10 @@ const Home = () => {
 
           <h2 className="draft-header">Your Drafts</h2>
           <div className="draft-cont">
-            {drafts.length === 0 ? (
+            {loadingDrafts ? (
+              <Loading loadMessage="Loading drafts" />
+            ) : drafts.length === 0 ? (
               <p>There are no drafts.</p>
-            ) : loadingDrafts ? (
-              <p>Loading drafts...</p>
             ) : (
               <div className="draft-posts">
                 {drafts.map((draft) => (

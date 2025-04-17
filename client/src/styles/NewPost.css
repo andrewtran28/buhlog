@@ -29,8 +29,21 @@
 
 .ql-editor {
   font-size: 1.1rem;
+  line-height: 1.8rem;
   background-color: white;
   min-height: 300px;
+}
+
+.ql-editor h1 {
+  margin: 2rem 0 1.2rem 0;
+}
+
+.ql-editor h2 {
+  margin: 1rem 0 0.8rem 0;
+}
+
+.ql-editor p {
+  margin-bottom: 1.4rem;
 }
 
 .new-post-btns button {

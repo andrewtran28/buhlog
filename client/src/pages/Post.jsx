@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate, updateDateTime } from "../utils/FormatDate";
 import CommentsSection from "../components/CommentsSection";
+import Loading from "../components/Loading";
 import "../styles/Post.css";
 
 function Post() {
@@ -12,9 +13,10 @@ function Post() {
 
   const { user, token } = useAuth();
   const [post, setPost] = useState(null);
-  const [comments, setComments] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -47,6 +49,7 @@ function Post() {
       const data = await response.json();
       if (response.ok) {
         setComments(data);
+        setLoadingComments(false);
       } else {
         console.error("Failed to load comments.");
       }
@@ -55,7 +58,7 @@ function Post() {
     }
   };
 
-  if (loading) return <p>Loading post...</p>;
+  if (loading) return <Loading loadMessage="Loading post" />;
   if (errorMessage) return <p style={{ color: "red" }}>{errorMessage}</p>;
 
   return (
@@ -67,7 +70,8 @@ function Post() {
             <div>
               <span className="author">{post.author}</span> |{" "}
               <span className="article-date">
-                {formatDate(post.createdAt)} {updateDateTime(post.createdAt, post.updatedAt)}
+                {formatDate(post.createdAt)}
+                <span className="article-updated">{updateDateTime(post.createdAt, post.updatedAt)}</span>
               </span>
             </div>
             {user && user.username === post.author && (
@@ -90,6 +94,7 @@ function Post() {
               API_URL={API_URL}
               setComments={setComments}
               fetchComments={fetchComments}
+              loadingComments={loadingComments}
             />
           ) : (
             <p>Drafts do not allow comments.</p>

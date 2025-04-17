@@ -17,6 +17,10 @@
   font-style: oblique;
 }
 
+.article-updated {
+  color: gray;
+}
+
 .comments-section ul {
   list-style: none;
   padding: 0;

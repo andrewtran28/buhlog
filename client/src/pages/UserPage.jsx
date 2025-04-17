@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import Loading from "../components/Loading";
 import "../styles/UserPage.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -32,8 +33,8 @@ function UserPage() {
       }
     };
 
-    fetchUserInfo();
-  }, [token]);
+    if (user) fetchUserInfo();
+  }, [token, user]);
 
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
@@ -72,41 +73,35 @@ function UserPage() {
     setErrorMessage("");
   };
 
+  if (!user || !userInfo) {
+    return <Loading loadMessage="Loading user info" />;
+  }
+
   return (
     <div id="user-page">
-      {user ? (
-        <>
-          <h1 id="title">Your Account</h1>
-          <div className="user-info">
-            <h2>{user.username}</h2>
-            <p>User ID: {user.id}</p>
-            {userInfo ? (
-              userInfo.isAuthor ? (
-                <>
-                  <p>
-                    Role: <span style={{ fontWeight: "600", color: "#ff124a" }}>Author</span>
-                  </p>
-                  <p>
-                    Posts: {userInfo.posts} | Drafts: {userInfo.drafts}
-                  </p>
-                  <p>Comments: {userInfo.comments}</p>
-                </>
-              ) : (
-                <>
-                  <p>
-                    Role: <span style={{ color: "green" }}>Reader</span>
-                  </p>
-                  <p>Comments: {userInfo.comments}</p>
-                </>
-              )
-            ) : (
-              <p>Loading user info...</p> // Display this while waiting for the fetch
-            )}
-          </div>
-        </>
-      ) : (
-        <p>Loading user info...</p>
-      )}
+      <h1 id="title">Your Account</h1>
+      <div className="user-info">
+        <h2>{user.username}</h2>
+        <p>User ID: {user.id}</p>
+        {userInfo.isAuthor ? (
+          <>
+            <p>
+              Role: <span style={{ fontWeight: "600", color: "#ff124a" }}>Author</span>
+            </p>
+            <p>
+              Posts: {userInfo.posts} | Drafts: {userInfo.drafts}
+            </p>
+            <p>Comments: {userInfo.comments}</p>
+          </>
+        ) : (
+          <>
+            <p>
+              Role: <span style={{ color: "green" }}>Reader</span>
+            </p>
+            <p>Comments: {userInfo.comments}</p>
+          </>
+        )}
+      </div>
 
       <div className="delete-form">
         {!showDeleteForm && (

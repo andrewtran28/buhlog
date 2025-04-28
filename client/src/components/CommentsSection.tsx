@@ -1,21 +1,50 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "../utils/FormatDate";
 import Loading from "../components/Loading";
 
-function CommentsSection({ comments, user, token, API_URL, setComments, fetchComments, loadingComments }) {
-  const [newComment, setNewComment] = useState("");
-  const [editingComment, setEditingComment] = useState(null);
-  const [editedComment, setEditedComment] = useState("");
-  const [commentError, setCommentError] = useState("");
+interface Comment {
+  id: number;
+  username: string;
+  text: string;
+  createdAt: string;
+}
 
-  const handleTextInput = (e) => {
+interface User {
+  username: string;
+}
+
+interface CommentSectionProps {
+  comments: Comment[];
+  user: User | null;
+  token: string | null;
+  API_URL: string;
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  fetchComments: () => void;
+  loadingComments: boolean;
+}
+
+function CommentsSection({
+  comments,
+  user,
+  token,
+  API_URL,
+  setComments,
+  fetchComments,
+  loadingComments,
+}: CommentSectionProps) {
+  const [newComment, setNewComment] = useState<string>("");
+  const [editingComment, setEditingComment] = useState<number | null>(null);
+  const [editedComment, setEditedComment] = useState<string>("");
+  const [commentError, setCommentError] = useState<string>("");
+
+  const handleTextInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     textarea.style.height = "auto";
     textarea.style.height = `calc(${textarea.scrollHeight}px - 4px)`;
   };
 
-  const handleCommentSubmit = async (e) => {
+  const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
@@ -44,7 +73,7 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async (commentId: number) => {
     try {
       const response = await fetch(`${API_URL}/comments/${commentId}`, {
         method: "DELETE",
@@ -61,7 +90,7 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
     }
   };
 
-  const handleEditComment = async (commentId) => {
+  const handleEditComment = async (commentId: number) => {
     try {
       const response = await fetch(`${API_URL}/comments/${commentId}`, {
         method: "PUT",
@@ -103,8 +132,8 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
                   value={newComment}
                   onInput={handleTextInput}
                   onChange={(e) => setNewComment(e.target.value)}
-                  maxLength="300"
-                  rows="1"
+                  maxLength={300}
+                  rows={1}
                 />
                 <button type="submit">Submit</button>
               </form>
@@ -137,8 +166,8 @@ function CommentsSection({ comments, user, token, API_URL, setComments, fetchCom
                               placeholder="Edit your comment..."
                               value={editedComment}
                               onChange={(e) => setEditedComment(e.target.value)}
-                              maxLength="300"
-                              rows="3"
+                              maxLength={300}
+                              rows={3}
                             />
                           </div>
                         ) : (

@@ -4,6 +4,16 @@ import { useAuth } from "../utils/AuthContext";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
+  published: boolean;
+};
+
 function EditPost() {
   const { postId } = useParams();
   const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post`;
@@ -11,7 +21,7 @@ function EditPost() {
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedContent, setUpdatedContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,8 +46,17 @@ function EditPost() {
     fetchPost();
   }, [postId]);
 
-  const handleSubmit = async (e, publish) => {
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    handleSubmit(e, null);
+  };
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
+    publish: boolean | null
+  ) => {
     e.preventDefault();
+
+    if (!post) return;
 
     if (!updatedTitle || !updatedContent) {
       setErrorMessage("Both title and content are required.");
@@ -71,11 +90,14 @@ function EditPost() {
         setErrorMessage(data.message || "Failed to update the post.");
       }
     } catch (error) {
-      console.error("Error updating the post.");
+      console.error("Error updating the post.", error);
+      setErrorMessage("An error occurred while updating the post.");
     }
   };
 
   const handleDeletePost = async () => {
+    if (!post) return;
+
     const confirmDelete = window.confirm("Are you sure you want to delete this post?");
     if (!confirmDelete) return;
 
@@ -94,6 +116,7 @@ function EditPost() {
       }
     } catch (error) {
       console.error("An error occurred while deleting the post.");
+      setErrorMessage("An error occurred while deleting the post.");
     }
   };
 
@@ -106,7 +129,7 @@ function EditPost() {
       <h1 id="title">Edit Post</h1>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onFormSubmit}>
         <input
           className="title-input"
           type="text"
@@ -126,7 +149,7 @@ function EditPost() {
             {post.published ? "Unpublish" : "Publish"}
           </button>
 
-          <button className="danger" onClick={handleDeletePost}>
+          <button className="danger" type="button" onClick={handleDeletePost}>
             Delete Post
           </button>
         </div>

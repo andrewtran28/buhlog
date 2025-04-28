@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import Loading from "../components/Loading";
@@ -6,9 +6,16 @@ import "../styles/UserPage.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+type UserInfo = {
+  isAuthor: boolean;
+  posts: number;
+  drafts: number;
+  comments: number;
+};
+
 function UserPage() {
   const { user, token, logout } = useAuth();
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [showDeleteForm, setShowDeleteForm] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,7 +43,7 @@ function UserPage() {
     if (user) fetchUserInfo();
   }, [token, user]);
 
-  const handleDeleteAccount = async (e) => {
+  const handleDeleteAccount = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!password) {
@@ -74,7 +81,7 @@ function UserPage() {
   };
 
   if (!user || !userInfo) {
-    return <Loading loadMessage="Loading user info" />;
+    return <Loading loadMessage="Loading user info" delay={1000} />;
   }
 
   return (

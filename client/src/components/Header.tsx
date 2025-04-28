@@ -2,6 +2,16 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import "../styles/Header.css";
 
+type User = {
+  id: number;
+  username: string;
+};
+
+type AuthContextType = {
+  user: User | null;
+  logout: () => void;
+};
+
 function Header() {
   const { user, logout } = useAuth();
 

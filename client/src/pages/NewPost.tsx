@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import ReactQuill from "react-quill";
@@ -6,6 +6,16 @@ import "react-quill/dist/quill.snow.css";
 import "../styles/NewPost.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
+  published: boolean;
+};
 
 function NewPost() {
   const { user, token } = useAuth();
@@ -18,7 +28,15 @@ function NewPost() {
     return <p>You do not have permission to create a post.</p>;
   }
 
-  const handleSubmit = async (e, isPublished) => {
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(e, false);
+  };
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
+    isPublished: boolean
+  ) => {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
@@ -56,7 +74,7 @@ function NewPost() {
       <h1 id="title">Create New Post</h1>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onFormSubmit}>
         <input
           className="title-input"
           type="text"

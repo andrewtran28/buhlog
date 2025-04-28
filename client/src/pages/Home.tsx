@@ -8,10 +8,24 @@ import "../styles/Home.css";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const POSTS_PER_PAGE = 8;
 
+type Post = {
+  id: number;
+  title: string;
+  slug: string;
+  author: string;
+  createdAt: string;
+  comments: { id: number }[];
+};
+
+type Draft = {
+  id: number;
+  title: string;
+};
+
 const Home = () => {
   const { user, token } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [drafts, setDrafts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingDrafts, setLoadingDrafts] = useState(true);
@@ -70,7 +84,7 @@ const Home = () => {
     }
   }, [user, token]);
 
-  if (loading) return <Loading loadMessage="Loading" />;
+  if (loading) return <Loading loadMessage="Loading" delay={1000} />;
 
   return (
     <section id="home">
@@ -120,7 +134,7 @@ const Home = () => {
           <h2 className="draft-header">Your Drafts</h2>
           <div className="draft-cont">
             {loadingDrafts ? (
-              <Loading loadMessage="Loading drafts" />
+              <Loading loadMessage="Loading drafts" delay={1000} />
             ) : drafts.length === 0 ? (
               <p>There are no drafts.</p>
             ) : (

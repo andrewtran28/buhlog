@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import "../styles/Login.css";
@@ -12,7 +12,7 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -44,10 +44,10 @@ function Login() {
     <div id="login">
       <h1 id="title">Log In</h1>
       <form onSubmit={handleLogin}>
-        <label name="username">Username: </label>
+        <label htmlFor="username">Username: </label>
         <input type="text" value={username} maxLength={25} onChange={(e) => setUsername(e.target.value)} required />
 
-        <label name="password"> Password: </label>
+        <label htmlFor="password"> Password: </label>
         <input type="password" value={password} maxLength={50} onChange={(e) => setPassword(e.target.value)} required />
         <br />
         {errorMessage && (

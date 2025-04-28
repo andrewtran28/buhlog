@@ -6,16 +6,35 @@ import CommentsSection from "../components/CommentsSection";
 import Loading from "../components/Loading";
 import "../styles/Post.css";
 
+type Post = {
+  id: number;
+  title: string;
+  slug: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  content: string;
+  published: boolean;
+  comments: { id: number }[];
+};
+
+type Comment = {
+  id: number;
+  username: string;
+  text: string;
+  createdAt: string;
+};
+
 function Post() {
   const { postSlug } = useParams();
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post/${encodeURIComponent(postSlug)}`;
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post/${encodeURIComponent(postSlug || "")}`;
   const navigate = useNavigate();
 
   const { user, token } = useAuth();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(true);
 
   useEffect(() => {
@@ -58,7 +77,7 @@ function Post() {
     }
   };
 
-  if (loading) return <Loading loadMessage="Loading post" />;
+  if (loading) return <Loading loadMessage="Loading post" delay={500} />;
   if (errorMessage) return <p style={{ color: "red" }}>{errorMessage}</p>;
 
   return (
@@ -90,7 +109,7 @@ function Post() {
             <CommentsSection
               comments={comments}
               user={user}
-              token={token}
+              token={token || ""}
               API_URL={API_URL}
               setComments={setComments}
               fetchComments={fetchComments}

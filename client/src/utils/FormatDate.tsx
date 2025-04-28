@@ -1,10 +1,10 @@
-const formatDate = (date) => {
+const formatDate = (date: Date | string) => {
   if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
   if (isNaN(dateObj.getTime())) return "";
 
-  const options = { month: "short" };
+  const options: Intl.DateTimeFormatOptions = { month: "short" };
   const month = new Intl.DateTimeFormat("en-US", options).format(dateObj);
   const day = dateObj.getDate();
   const year = dateObj.getFullYear();
@@ -12,7 +12,7 @@ const formatDate = (date) => {
   return `${month} ${day}, ${year}`;
 };
 
-const formatDateTime = (date) => {
+const formatDateTime = (date: Date | string) => {
   if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date); // Ensure it's a Date object
@@ -30,7 +30,7 @@ const formatDateTime = (date) => {
     const ampm = dateObj.getHours() < 12 ? "AM" : "PM";
     return `Today at ${hours}:${minutes}${ampm}`;
   } else {
-    const options = { month: "short" };
+    const options: Intl.DateTimeFormatOptions = { month: "short" };
     const month = new Intl.DateTimeFormat("en-US", options).format(dateObj);
     const day = dateObj.getDate();
     const year = dateObj.getFullYear();
@@ -38,7 +38,7 @@ const formatDateTime = (date) => {
   }
 };
 
-const updateDateTime = (createdAt, updatedAt) => {
+const updateDateTime = (createdAt: Date | string, updatedAt: Date | string) => {
   if (!createdAt || !updatedAt) return ""; // Handle invalid inputs
 
   // Convert to Date objects if they are strings

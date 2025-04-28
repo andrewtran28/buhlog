@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import "../styles/App.css";
 
-const Loading = ({ delay = 1000, loadMessage }) => {
+type loadMessageContext = {
+  delay: number;
+  loadMessage: string;
+};
+
+const Loading = ({ delay = 1000, loadMessage }: loadMessageContext) => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {

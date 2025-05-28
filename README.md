@@ -15,8 +15,9 @@ This project's back-end framework was initially developed using Node.js and Expr
 - React + Vite
 - HTML
 - CSS
-- JavaScript
+- JavaScript (TypeScript)
 - Node.js + Express
+  - Passport
 - Python + Flask
 - Netlify (for hosting the static website)
 - Render (for hosting web server)

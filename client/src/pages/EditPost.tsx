@@ -114,8 +114,6 @@ function EditPost() {
         },
       });
 
-      //delete all images in post too?
-
       if (response.ok) {
         navigate("/");
       } else {

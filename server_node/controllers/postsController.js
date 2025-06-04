@@ -5,6 +5,16 @@ const CustomError = require("../utils/customError");
 const { handleValidationErrors } = require("../utils/validator");
 const { generateUniqueSlug } = require("../utils/slugify");
 const DOMPurify = require("isomorphic-dompurify");
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const cheerio = require("cheerio");
+
+const s3 = new S3Client({
+  region: process.env.BUCKET_REGION,
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  },
+});
 
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await prisma.post.findMany({
@@ -118,6 +128,38 @@ const deletePost = asyncHandler(async (req, res) => {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
+  const post = await prisma.post.findUnique({
+    where: { id: parseInt(req.params.postId) },
+  });
+
+  if (!post) {
+    throw new CustomError(404, "Post not found.");
+  }
+
+  // Extract image URLs from post content, cheerio is used to parse html
+  const $ = cheerio.load(post.content || "");
+  const imageUrls = $("img")
+    .map((_, el) => $(el).attr("src"))
+    .get();
+
+  // Convert URLs to S3 keys and delete
+  const deletePromises = imageUrls.map((url) => {
+    const key = new URL(url).pathname.slice(1); // remove leading '/'
+    return s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.BUCKET_NAME,
+        Key: key,
+      })
+    );
+  });
+
+  try {
+    await Promise.all(deletePromises);
+  } catch (err) {
+    console.error("Error deleting images from S3:", err);
+  }
+
+  // Delete post from database
   await prisma.post.delete({
     where: { id: parseInt(req.params.postId) },
   });

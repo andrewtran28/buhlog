@@ -21,6 +21,7 @@ function EditPost() {
   const navigate = useNavigate();
 
   const [post, setPost] = useState<Post | null>(null);
+  const [originalImages, setOriginalImages] = useState<Set<string>>(new Set());
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedContent, setUpdatedContent] = useState("");
   const [uploadedImages, setUploadedImages] = useState<Set<string>>(new Set());
@@ -35,6 +36,9 @@ function EditPost() {
           setPost(data);
           setUpdatedTitle(data.title);
           setUpdatedContent(data.content);
+
+          const initialImages = getUsedImageUrls(data.content);
+          setOriginalImages(initialImages);
         } else {
           setErrorMessage(data.message || "Post not found.");
         }
@@ -62,8 +66,8 @@ function EditPost() {
       return;
     }
 
-    const usedImageUrls = getUsedImageUrls(updatedContent);
-    await deleteUnusedImages(uploadedImages, usedImageUrls, token, API_BASE_URL);
+    const newImageUrls = getUsedImageUrls(updatedContent);
+    await deleteUnusedImages(originalImages, newImageUrls, token, API_BASE_URL);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/post/${post.id}`, {

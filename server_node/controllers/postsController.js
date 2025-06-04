@@ -106,7 +106,7 @@ const createPost = asyncHandler(async (req, res) => {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
-  const sanitizedContent = DOMPurify.sanitize(req.body.content);
+  const sanitizedContent = DOMPurify.sanitize(cleanHtmlContent(req.body.content));
   const slug = await generateUniqueSlug(req.body.title);
   const createdPost = await prisma.post.create({
     data: {
@@ -200,7 +200,7 @@ const editPost = asyncHandler(async (req, res) => {
     data: {
       title: newTitle,
       slug: newSlug,
-      content: req.body.content || post.content,
+      content: cleanHtmlContent(req.body.content || post.content),
       published: req.body.published === undefined ? post.published : Boolean(req.body.published),
       createdAt: isPublishing ? new Date() : post.createdAt,
     },
@@ -211,6 +211,18 @@ const editPost = asyncHandler(async (req, res) => {
     post: updatedPost,
   });
 });
+
+const cleanHtmlContent = (html) => {
+  const $ = cheerio.load(html);
+  $("p").each(function () {
+    if (!$(this).text().trim()) {
+      $(this).remove();
+    }
+  });
+
+  const cleaned = $.html().trim();
+  return cleaned;
+};
 
 module.exports = {
   getAllPosts,

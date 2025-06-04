@@ -32,13 +32,15 @@
 }
 
 .search-bar {
+  display: flex;
   font-family: inherit;
-  margin-bottom: 20px;
-  min-width: 600px;
+  margin: 20px 0;
 }
 
 .search-input {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  max-width: 600px;
+  width: 100%;
 }
 
 @media (max-width: 800px) {
@@ -50,6 +52,10 @@
 
   #home span {
     font-size: 1.15rem;
+  }
+
+  .search-input {
+    font-size: 1.25rem;
   }
 }
 

@@ -94,6 +94,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         ["blockquote"],
         [{ color: [] }, { background: [] }],
       ],
+      clipboard: {
+        matchVisual: false, // Disable automatic <p> wrapping, extra spacing, etc.
+      },
       handlers: {
         image: handleImageUpload,
       },

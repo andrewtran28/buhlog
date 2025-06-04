@@ -6,7 +6,7 @@ import Loading from "../components/Loading";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const POSTS_PER_PAGE = 8;
+const POSTS_PER_PAGE = 5;
 
 type Post = {
   id: number;

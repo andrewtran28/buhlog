@@ -1,25 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import QuillEditor from "../components/QuillEditor";
+import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
+
 import "../styles/NewPost.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-type Post = {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: number;
-  published: boolean;
-};
-
 function NewPost() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
+  const [uploadedImages, setUploadImages] = useState<Set<string>>(new Set());
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,6 +36,9 @@ function NewPost() {
       return;
     }
 
+    const usedImageUrls = getUsedImageUrls(content);
+    await deleteUnusedImages(uploadedImages, usedImageUrls, token, API_BASE_URL);
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/post`, {
         method: "POST",
@@ -64,7 +59,7 @@ function NewPost() {
       } else {
         setErrorMessage(data.message || "Failed to create post.");
       }
-    } catch (error) {
+    } catch (err) {
       setErrorMessage("An error occurred while creating the post.");
     }
   };
@@ -85,7 +80,13 @@ function NewPost() {
           required
         />
 
-        <ReactQuill className="quill" value={content} onChange={setContent} modules={quillModules} />
+        <QuillEditor
+          token={token}
+          content={content}
+          setContent={setContent}
+          uploadedImages={uploadedImages}
+          setUploadedImages={setUploadImages}
+        />
 
         <div className="new-post-btns">
           <button type="button" onClick={(e) => handleSubmit(e, false)}>
@@ -99,18 +100,5 @@ function NewPost() {
     </div>
   );
 }
-
-const quillModules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["bold", "italic", "underline"],
-    [{ align: [] }],
-    ["link"],
-    [{ indent: "-1" }, { indent: "+1" }],
-    ["blockquote"],
-    [{ color: [] }, { background: [] }],
-  ],
-};
 
 export default NewPost;

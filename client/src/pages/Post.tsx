@@ -90,7 +90,7 @@ function Post() {
               <span className="author">{post.author}</span> |{" "}
               <span className="article-date">
                 {formatDate(post.createdAt)}
-                <span className="article-updated">{updateDateTime(post.createdAt, post.updatedAt)}</span>
+                <span className="article-updated"> {updateDateTime(post.createdAt, post.updatedAt)}</span>
               </span>
             </div>
             {user && user.username === post.author && (

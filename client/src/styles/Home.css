@@ -31,6 +31,16 @@
   margin: 0 10px;
 }
 
+.search-bar {
+  font-family: inherit;
+  margin-bottom: 20px;
+  min-width: 600px;
+}
+
+.search-input {
+  font-size: 1.5rem;
+}
+
 @media (max-width: 800px) {
   #home h2 {
     margin: 5px 0;

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import QuillEditor from "../components/QuillEditor";
+import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
 
 type Post = {
   id: number;
@@ -15,21 +15,21 @@ type Post = {
 };
 
 function EditPost() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { postId } = useParams();
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/post`;
-
   const { token } = useAuth();
   const navigate = useNavigate();
 
   const [post, setPost] = useState<Post | null>(null);
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedContent, setUpdatedContent] = useState("");
+  const [uploadedImages, setUploadedImages] = useState<Set<string>>(new Set());
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`${API_URL}/${postId}/edit`);
+        const response = await fetch(`${API_BASE_URL}/api/post/${postId}/edit`);
         const data = await response.json();
         if (response.ok) {
           setPost(data);
@@ -55,7 +55,6 @@ function EditPost() {
     publish: boolean | null
   ) => {
     e.preventDefault();
-
     if (!post) return;
 
     if (!updatedTitle || !updatedContent) {
@@ -63,8 +62,11 @@ function EditPost() {
       return;
     }
 
+    const usedImageUrls = getUsedImageUrls(updatedContent);
+    await deleteUnusedImages(uploadedImages, usedImageUrls, token, API_BASE_URL);
+
     try {
-      const response = await fetch(`${API_URL}/${post.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/post/${post.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -97,17 +99,18 @@ function EditPost() {
 
   const handleDeletePost = async () => {
     if (!post) return;
-
     const confirmDelete = window.confirm("Are you sure you want to delete this post?");
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${API_URL}/${post.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/post/${post.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      //delete all images in post too?
 
       if (response.ok) {
         navigate("/");
@@ -139,7 +142,13 @@ function EditPost() {
           placeholder="Title"
         />
 
-        <ReactQuill value={updatedContent} onChange={setUpdatedContent} modules={quillModules} />
+        <QuillEditor
+          token={token}
+          content={updatedContent}
+          setContent={setUpdatedContent}
+          uploadedImages={uploadedImages}
+          setUploadedImages={setUploadedImages}
+        />
 
         <div className="new-post-btns">
           <button type="button" onClick={(e) => handleSubmit(e, null)}>
@@ -157,19 +166,5 @@ function EditPost() {
     </div>
   );
 }
-
-const quillModules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["bold", "italic", "underline"],
-    [{ align: [] }],
-    ["link"],
-    [{ indent: "-1" }, { indent: "+1" }],
-    [{ direction: "rtl" }],
-    ["blockquote"],
-    [{ color: [] }, { background: [] }],
-  ],
-};
 
 export default EditPost;

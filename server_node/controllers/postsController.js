@@ -172,9 +172,6 @@ const deletePost = asyncHandler(async (req, res) => {
 const editPost = asyncHandler(async (req, res) => {
   handleValidationErrors(req);
 
-  console.log("Saving post with uncleaned content:", req.body.content);
-  console.log("Saving post with content:", cleanHtmlContent(req.body.content));
-
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.isAuthor) {
     throw new CustomError(403, "User role must be Author to perform this action.");

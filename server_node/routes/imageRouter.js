@@ -20,7 +20,7 @@ const s3 = new S3Client({
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 3 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
       return cb(new Error("Only image files are allowed"), false);
@@ -35,7 +35,7 @@ uploadRouter.post(
   upload.single("image"),
   asyncHandler(async (req, res) => {
     if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded or file larger than 5MB." });
+      return res.status(400).json({ message: "No file uploaded or file larger than 3MB." });
     }
 
     const imageExt = req.file.originalname.split(".").pop();

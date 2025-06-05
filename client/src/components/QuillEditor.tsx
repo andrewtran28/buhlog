@@ -1,4 +1,3 @@
-// components/QuillEditor.tsx
 import React, { useRef, useCallback, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -62,6 +61,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           if (range) {
             editor.insertEmbed(range.index, "image", data.imageUrl);
             editor.setSelection(range.index + 1);
+            setContent(editor.root.innerHTML); //Ensures content state is updated
           }
         }, 0);
       } catch (err) {
@@ -82,6 +82,63 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
   }, [existingContent, setUploadedImages]);
 
+  useEffect(() => {
+    const quill = quillRef.current?.getEditor();
+    if (!quill) return;
+
+    const handlePaste = async (e: ClipboardEvent) => {
+      const clipboardData = e.clipboardData;
+      if (!clipboardData) return;
+
+      const htmlData = clipboardData.getData("text/html");
+      if (!htmlData) return;
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlData, "text/html");
+      const images = doc.querySelectorAll("img");
+
+      const base64Images = Array.from(images).filter((img) => img.src?.startsWith("data:image/"));
+
+      if (base64Images.length > 0) {
+        e.preventDefault();
+
+        for (const img of base64Images) {
+          const src = img.getAttribute("src");
+          if (!src) continue;
+
+          try {
+            const blob = await (await fetch(src)).blob();
+            const formData = new FormData();
+            formData.append("image", blob, "pasted-image.png");
+
+            const res = await fetch(`${API_BASE_URL}/api/image`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            });
+
+            const data = await res.json();
+            if (res.ok && data.imageUrl) {
+              addUploadedImage(data.imageUrl);
+              const range = quill.getSelection(true);
+              quill.insertEmbed(range.index, "image", data.imageUrl);
+              quill.setSelection(range.index + 1);
+            }
+          } catch (err) {
+            console.error("Failed to upload pasted image:", err);
+          }
+        }
+      }
+    };
+
+    quill.root.addEventListener("paste", handlePaste as EventListener);
+    return () => {
+      quill.root.removeEventListener("paste", handlePaste as EventListener);
+    };
+  }, [token]);
+
   const quillModules = {
     toolbar: {
       container: [
@@ -95,7 +152,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         [{ color: [] }, { background: [] }],
       ],
       clipboard: {
-        matchVisual: false, // Disable automatic <p> wrapping, extra spacing, etc.
+        matchVisual: false, // Disable automatic <p> wrapping
       },
       handlers: {
         image: handleImageUpload,

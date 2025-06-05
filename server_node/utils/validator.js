@@ -56,7 +56,7 @@ const commentValidator = [
   body("text").trim().notEmpty().isLength({ max: 500 }).withMessage("Comment must be under 500 characters.").bail(),
 ];
 
-//Helper funciton for any API route that requires validator.
+//Helper function for any API route that requires validator.
 const handleValidationErrors = (req) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
@@ -65,9 +65,25 @@ const handleValidationErrors = (req) => {
   }
 };
 
+//Helper function to clean html content of empty paragraphs
+const cleanHtmlContent = (html) => {
+  const $ = cheerio.load(html, null, false); //false = disables auto-wrap with <html><body>
+  $("p").each(function () {
+    const text = $(this).text().trim();
+    const containsImage = $(this).find("img").length > 0;
+
+    if (!text && !containsImage) {
+      $(this).remove();
+    }
+  });
+
+  return $("body").length ? $("body").html().trim() : $.root().html().trim();
+};
+
 module.exports = {
   signupValidator,
   postValidator,
   commentValidator,
   handleValidationErrors,
+  cleanHtmlContent,
 };

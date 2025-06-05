@@ -200,7 +200,7 @@ const editPost = asyncHandler(async (req, res) => {
     data: {
       title: newTitle,
       slug: newSlug,
-      content: cleanHtmlContent(req.body.content || post.content),
+      content: cleanHtmlContent(req.body.content) || cleanHtmlContent(post.content),
       published: req.body.published === undefined ? post.published : Boolean(req.body.published),
       createdAt: isPublishing ? new Date() : post.createdAt,
     },
@@ -211,18 +211,6 @@ const editPost = asyncHandler(async (req, res) => {
     post: updatedPost,
   });
 });
-
-const cleanHtmlContent = (html) => {
-  const $ = cheerio.load(html);
-  $("p").each(function () {
-    if (!$(this).text().trim()) {
-      $(this).remove();
-    }
-  });
-
-  const cleaned = $.html().trim();
-  return cleaned;
-};
 
 module.exports = {
   getAllPosts,

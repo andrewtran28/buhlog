@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const CustomError = require("./customError");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const cheerio = require("cheerio");
 
 const signupValidator = [
   body("username")
@@ -71,8 +72,10 @@ const cleanHtmlContent = (html) => {
   $("p").each(function () {
     const text = $(this).text().trim();
     const containsImage = $(this).find("img").length > 0;
+    const containsFormatting = $(this).attr("class")?.trim();
 
-    if (!text && !containsImage) {
+    //Sanitize HTML text if it has no text, no image, and no class formatting
+    if (!text && !containsImage && !containsFormatting) {
       $(this).remove();
     }
   });

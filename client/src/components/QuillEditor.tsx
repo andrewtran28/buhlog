@@ -61,7 +61,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           if (range) {
             editor.insertEmbed(range.index, "image", data.imageUrl);
             editor.setSelection(range.index + 1);
-            setContent(editor.root.innerHTML); //Ensures content state is updated
+            // setContent(editor.root.innerHTML); //Ensures content state is updated
           }
         }, 0);
       } catch (err) {

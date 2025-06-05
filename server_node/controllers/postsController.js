@@ -2,11 +2,10 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const asyncHandler = require("express-async-handler");
 const CustomError = require("../utils/customError");
-const { handleValidationErrors } = require("../utils/validator");
+const { handleValidationErrors, cleanHtmlContent } = require("../utils/validator");
 const { generateUniqueSlug } = require("../utils/slugify");
 const DOMPurify = require("isomorphic-dompurify");
 const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const cheerio = require("cheerio");
 
 const s3 = new S3Client({
   region: process.env.BUCKET_REGION,
@@ -106,7 +105,10 @@ const createPost = asyncHandler(async (req, res) => {
     throw new CustomError(403, "User role must be Author to perform this action.");
   }
 
-  const sanitizedContent = DOMPurify.sanitize(cleanHtmlContent(req.body.content));
+  const sanitizedContent = DOMPurify.sanitize(cleanHtmlContent(req.body.content), {
+    ALLOWED_ATTR: ["class"],
+  });
+
   const slug = await generateUniqueSlug(req.body.title);
   const createdPost = await prisma.post.create({
     data: {
@@ -169,6 +171,9 @@ const deletePost = asyncHandler(async (req, res) => {
 
 const editPost = asyncHandler(async (req, res) => {
   handleValidationErrors(req);
+
+  console.log("Saving post with uncleaned content:", req.body.content);
+  console.log("Saving post with content:", cleanHtmlContent(req.body.content));
 
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.isAuthor) {

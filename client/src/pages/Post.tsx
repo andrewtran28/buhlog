@@ -5,6 +5,7 @@ import { formatDate, updateDateTime } from "../utils/FormatDate";
 import CommentsSection from "../components/CommentsSection";
 import Loading from "../components/Loading";
 import "../styles/Post.css";
+import "react-quill/dist/quill.snow.css";
 
 type Post = {
   id: number;
@@ -90,7 +91,7 @@ function Post() {
               <span className="author">{post.author}</span> |{" "}
               <span className="article-date">
                 {formatDate(post.createdAt)}
-                <span className="article-updated">{updateDateTime(post.createdAt, post.updatedAt)}</span>
+                <span className="article-updated"> {updateDateTime(post.createdAt, post.updatedAt)}</span>
               </span>
             </div>
             {user && user.username === post.author && (
@@ -101,7 +102,7 @@ function Post() {
           </div>
           <hr />
 
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="article-content" dangerouslySetInnerHTML={{ __html: post.content }} />
 
           <hr />
 

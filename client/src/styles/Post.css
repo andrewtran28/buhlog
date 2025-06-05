@@ -21,6 +21,10 @@
   color: gray;
 }
 
+.article-content p {
+  margin-bottom: 0.5rem;
+}
+
 .comments-section ul {
   list-style: none;
   padding: 0;
@@ -101,4 +105,17 @@
   place-self: start;
   display: flex;
   width: calc(100% - 2px);
+}
+
+.ql-align-center {
+  text-align: center;
+}
+.ql-align-right {
+  text-align: right;
+}
+.ql-align-justify {
+  text-align: justify;
+}
+.ql-align-left {
+  text-align: left;
 }

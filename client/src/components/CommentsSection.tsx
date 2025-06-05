@@ -37,6 +37,7 @@ function CommentsSection({
   const [editingComment, setEditingComment] = useState<number | null>(null);
   const [editedComment, setEditedComment] = useState<string>("");
   const [commentError, setCommentError] = useState<string>("");
+  const [commenting, setCommenting] = useState<boolean>(false); //Disable comment submit while already commenting
 
   const handleTextInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
@@ -47,6 +48,8 @@ function CommentsSection({
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+
+    setCommenting(true);
 
     try {
       const response = await fetch(`${API_URL}/comments`, {
@@ -70,6 +73,8 @@ function CommentsSection({
       }
     } catch (error) {
       setCommentError("An error occurred while posting the comment.");
+    } finally {
+      setCommenting(false);
     }
   };
 
@@ -135,7 +140,9 @@ function CommentsSection({
                   maxLength={300}
                   rows={1}
                 />
-                <button type="submit">Submit</button>
+                <button type="submit" disabled={commenting}>
+                  Submit
+                </button>
               </form>
               {commentError && <p style={{ color: "red" }}>{commentError}</p>}
             </div>

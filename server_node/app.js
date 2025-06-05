@@ -8,6 +8,7 @@ const { configurePassport } = require("./utils/auth");
 const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
 const postsRouter = require("./routes/postsRouter");
+const imageRouter = require("./routes/imageRouter");
 
 const app = express();
 
@@ -25,6 +26,7 @@ configurePassport(passport);
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/post", postsRouter);
+app.use("/api/image", imageRouter);
 
 //Error handling middleware
 app.use((err, req, res, next) => {

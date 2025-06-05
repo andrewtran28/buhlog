@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate } from "../utils/FormatDate";
@@ -6,7 +6,7 @@ import Loading from "../components/Loading";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const POSTS_PER_PAGE = 8;
+const POSTS_PER_PAGE = 5;
 
 type Post = {
   id: number;
@@ -25,15 +25,24 @@ type Draft = {
 const Home = () => {
   const { user, token } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingDrafts, setLoadingDrafts] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const filteredPosts = useMemo(() => {
+    return posts.filter((p) => p.title.toLowerCase().includes(searchTerm));
+  }, [posts, searchTerm]);
+
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const currentPosts = posts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const currentPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -99,8 +108,18 @@ const Home = () => {
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      {posts.length === 0 ? (
-        <p>No posts have been published.</p>
+      <div className="search-bar">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Search posts by title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {filteredPosts.length === 0 ? (
+        <p>No posts have been found or there are no posts published.</p>
       ) : (
         <>
           <div className="latest-posts">

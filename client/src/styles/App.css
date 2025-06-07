@@ -5,6 +5,8 @@ body {
   --font-dark: #2f2620;
   --font-light: #e0e5e9;
   --accent: #f3d849;
+  --accent-hover: #d4bb3f;
+  --accent-active: #a59230;
   --link: #0a62d0;
   --header: #191718;
   --danger: #ff124a;
@@ -75,10 +77,10 @@ button {
   user-select: none; /* Standard syntax */
 }
 button:hover {
-  background-color: #d4bb3f;
+  background-color: var(--accent-hover);
 }
 button:active {
-  background-color: #a59230;
+  background-color: var(--accent-active);
 }
 
 .prevent-select {
@@ -113,6 +115,15 @@ button:active {
 }
 .loading h1.show {
   opacity: 1;
+}
+
+.ql-editor p {
+  margin-bottom: 1rem !important;
+  line-height: 1.5rem;
+}
+
+.ql-editor li {
+  margin-bottom: 0.25rem;
 }
 
 @media (max-width: 800px) {

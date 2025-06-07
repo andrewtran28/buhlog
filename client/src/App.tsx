@@ -11,6 +11,7 @@ import NewPost from "./pages/NewPost";
 import EditPost from "./pages/EditPost";
 import ErrorPage from "./pages/ErrorPage";
 import Footer from "./components/Footer";
+import "react-quill/dist/quill.snow.css";
 
 const App = () => {
   return (

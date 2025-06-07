@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import QuillEditor from "../components/QuillEditor";
 import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
+import ScrollToTop from "../components/ScrollToTop";
 
 type Post = {
   id: number;
@@ -165,6 +166,7 @@ function EditPost() {
           </button>
         </div>
       </form>
+      <ScrollToTop />
     </div>
   );
 }

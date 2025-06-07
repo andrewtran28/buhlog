@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate } from "../utils/FormatDate";
 import Loading from "../components/Loading";
+import ScrollToTop from "../components/ScrollToTop";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,7 +34,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredPosts = useMemo(() => {
-    return posts.filter((p) => p.title.toLowerCase().includes(searchTerm));
+    return posts.filter((p) => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [posts, searchTerm]);
 
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
@@ -170,6 +171,7 @@ const Home = () => {
           </div>
         </>
       )}
+      <ScrollToTop />
     </section>
   );
 };

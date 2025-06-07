@@ -4,6 +4,7 @@ import { useAuth } from "../utils/AuthContext";
 import { formatDate, updateDateTime } from "../utils/FormatDate";
 import CommentsSection from "../components/CommentsSection";
 import Loading from "../components/Loading";
+import ScrollToTop from "../components/ScrollToTop";
 import "../styles/Post.css";
 import "react-quill/dist/quill.snow.css";
 
@@ -102,7 +103,7 @@ function Post() {
           </div>
           <hr />
 
-          <div className="article-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="ql-editor " dangerouslySetInnerHTML={{ __html: post.content }} />
 
           <hr />
 
@@ -123,6 +124,8 @@ function Post() {
       ) : (
         <p>Post not found.</p>
       )}
+
+      <ScrollToTop />
     </section>
   );
 }

@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const slugify = (title) => {
+  // Sanitize and remove unwanted characters from post title to create a URL friendly slug
   let baseSlug = title
     .normalize("NFKD")
     .replace(/[^\w\s-]/g, "")

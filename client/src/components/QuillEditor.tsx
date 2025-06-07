@@ -142,14 +142,16 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const quillModules = {
     toolbar: {
       container: [
+        [{ size: ["small", false, "large", "huge"] }],
         [{ header: "1" }, { header: "2" }],
-        [{ list: "ordered" }, { list: "bullet" }],
         ["bold", "italic", "underline"],
-        [{ align: [] }],
-        ["link", "image"],
-        [{ indent: "-1" }, { indent: "+1" }],
-        ["blockquote"],
         [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ indent: "-1" }, { indent: "+1" }],
+        ["blockquote", "code-block"],
+        ["link", "image"],
+        ["clean"],
       ],
       clipboard: {
         matchVisual: false, // Disable automatic <p> wrapping

@@ -25,6 +25,9 @@
 
 .ql-toolbar {
   background-color: var(--accent);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .ql-editor {

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import QuillEditor from "../components/QuillEditor";
 import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
-
+import ScrollToTop from "../components/ScrollToTop";
 import "../styles/NewPost.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -97,6 +97,7 @@ function NewPost() {
           </button>
         </div>
       </form>
+      <ScrollToTop />
     </div>
   );
 }

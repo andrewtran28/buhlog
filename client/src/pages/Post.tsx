@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import { formatDate, updateDateTime } from "../utils/FormatDate";
@@ -38,6 +38,12 @@ function Post() {
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(true);
+  const [showScrollToComments, setShowScrollToComments] = useState(false);
+  const commentsRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToComments = () => {
+    commentsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -63,6 +69,35 @@ function Post() {
     fetchPost();
     fetchComments();
   }, [postSlug]);
+
+  useEffect(() => {
+    const commentVisibility = () => {
+      const pageHeight = document.body.scrollHeight;
+      const windowHeight = window.innerHeight;
+
+      if (pageHeight <= windowHeight * 1.5) {
+        setShowScrollToComments(false);
+        return;
+      }
+
+      const commentsTop = commentsRef.current?.getBoundingClientRect().top ?? Infinity;
+
+      if (commentsTop <= window.innerHeight) {
+        setShowScrollToComments(false);
+      } else {
+        setShowScrollToComments(true);
+      }
+    };
+
+    commentVisibility();
+    window.addEventListener("scroll", commentVisibility);
+    window.addEventListener("resize", commentVisibility);
+
+    return () => {
+      window.removeEventListener("scroll", commentVisibility);
+      window.removeEventListener("resize", commentVisibility);
+    };
+  }, []);
 
   const fetchComments = async () => {
     try {
@@ -108,15 +143,17 @@ function Post() {
           <hr />
 
           {post.published ? (
-            <CommentsSection
-              comments={comments}
-              user={user}
-              token={token || ""}
-              API_URL={API_URL}
-              setComments={setComments}
-              fetchComments={fetchComments}
-              loadingComments={loadingComments}
-            />
+            <div ref={commentsRef}>
+              <CommentsSection
+                comments={comments}
+                user={user}
+                token={token || ""}
+                API_URL={API_URL}
+                setComments={setComments}
+                fetchComments={fetchComments}
+                loadingComments={loadingComments}
+              />
+            </div>
           ) : (
             <p>Drafts do not allow comments.</p>
           )}
@@ -126,6 +163,13 @@ function Post() {
       )}
 
       <ScrollToTop />
+      <button
+        className={`scroll-to-comments ${showScrollToComments ? "visible" : ""}`}
+        onClick={scrollToComments}
+        title="Scroll to Comments"
+      >
+        💬
+      </button>
     </section>
   );
 }

@@ -24,6 +24,7 @@ function ScrollToTop() {
       className={`scroll-to-top ${showButton ? "visible" : ""}`}
       onClick={handleClick}
       aria-label="Scroll to top of page"
+      title="Scroll to Top"
     >
       ↑
     </button>

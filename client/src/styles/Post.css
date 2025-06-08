@@ -1,3 +1,7 @@
+#article #title {
+  font-size: 3.5rem;
+}
+
 .article-top {
   display: flex;
   justify-content: space-between;
@@ -31,7 +35,7 @@
   padding: 3px 10px;
 }
 
-.comments-section h2 {
+#article .comments-section h2 {
   font-size: 2rem;
   margin: 10px 0;
 }
@@ -103,14 +107,43 @@
   width: calc(100% - 2px);
 }
 
+.scroll-to-comments {
+  background-color: var(--link);
+  border: none;
+  position: fixed;
+  bottom: 65px;
+  right: 15px;
+  z-index: 100;
+  padding: 10px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.scroll-to-comments.visible {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+.scroll-to-comments:hover {
+  opacity: 1;
+  background-color: var(--link-hover);
+}
+.scroll-to-comments:active {
+  background-color: #0953ad;
+}
+
 /* The following below are Quill style formatting that are applied to the posts outside the editor. */
 #article .ql-editor {
   background-color: transparent;
 }
 
 #article .ql-editor p {
-  margin-bottom: 1rem;
-  line-height: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.25rem;
 }
 
 #article .ql-editor li {

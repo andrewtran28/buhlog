@@ -145,6 +145,7 @@ function Post() {
           {post.published ? (
             <div ref={commentsRef}>
               <CommentsSection
+                postAuthor={post.author}
                 comments={comments}
                 user={user}
                 token={token || ""}

@@ -1,6 +1,9 @@
 import React, { useRef, useCallback, useEffect } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
+import ImageResize from "quill-image-resize";
 import "react-quill/dist/quill.snow.css";
+
+Quill.register("modules/imageResize", ImageResize);
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,18 +11,18 @@ interface QuillEditorProps {
   token: string;
   content: string;
   setContent: (value: string) => void;
-  uploadedImages: Set<string>;
   setUploadedImages: React.Dispatch<React.SetStateAction<Set<string>>>;
   existingContent?: string;
+  readOnly?: boolean;
 }
 
 const QuillEditor: React.FC<QuillEditorProps> = ({
   token,
   content,
   setContent,
-  uploadedImages,
   setUploadedImages,
   existingContent,
+  readOnly,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
 
@@ -204,16 +207,34 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         ["link", "image"],
         ["clean"],
       ],
-      clipboard: {
-        matchVisual: false, // Disable automatic <p> wrapping
-      },
+
       handlers: {
         image: handleImageUpload,
       },
     },
+    clipboard: {
+      matchVisual: false, // Disable automatic <p> wrapping
+    },
+    imageResize: {
+      modules: ["Resize", "DisplaySize", "Toolbar"],
+    },
+    history: {
+      delay: 1000,
+      maxStack: 500,
+      userOnly: true,
+    },
   };
 
-  return <ReactQuill ref={quillRef} className="quill" value={content} onChange={setContent} modules={quillModules} />;
+  return (
+    <ReactQuill
+      ref={quillRef}
+      className="quill"
+      readOnly={readOnly}
+      value={content}
+      onChange={setContent}
+      modules={quillModules}
+    />
+  );
 };
 
 export default QuillEditor;

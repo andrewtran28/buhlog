@@ -45,16 +45,50 @@
   margin: 1rem 0 0.8rem 0;
 }
 
-.ql-editor p {
-  margin-bottom: 0.5rem;
-}
-
 .new-post-btns button {
   margin: 10px 10px 10px 0;
 }
 
 .new-post-btns .danger {
   margin-left: 40px;
+}
+
+.toast-message {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--link);
+  color: var(--font-light);
+  padding: 12px 24px;
+  border-radius: 6px;
+  opacity: 1;
+  animation: slideFade 3s forwards;
+  z-index: 100;
+
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.ql-container.ql-disabled {
+  background-color: #f9f9f9;
+  opacity: 0.6;
+}
+
+@keyframes slideFade {
+  0% {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  10% {
+    transform: translateX(-50%) translateY(25%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0%);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 800px) {

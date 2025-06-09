@@ -27,6 +27,8 @@ function EditPost() {
   const [updatedContent, setUpdatedContent] = useState("");
   const [uploadedImages, setUploadedImages] = useState<Set<string>>(new Set());
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -57,15 +59,17 @@ function EditPost() {
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
-    publish: boolean | null
+    publish: boolean | null,
+    exitAfterSave: boolean = false
   ) => {
     e.preventDefault();
     if (!post) return;
-
     if (!updatedTitle || !updatedContent) {
       setErrorMessage("Both title and content are required.");
       return;
     }
+
+    setIsSaving(true);
 
     const newImageUrls = getUsedImageUrls(updatedContent);
     await deleteUnusedImages(originalImages, newImageUrls, token, API_BASE_URL);
@@ -84,21 +88,27 @@ function EditPost() {
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
 
-        if (post.published) {
-          navigate(`/post/${data.post.slug}`);
+      if (response.ok) {
+        if (exitAfterSave) {
+          if (data.post.published) {
+            navigate(`/post/${data.post.slug}`);
+          } else {
+            navigate("/");
+          }
         } else {
-          navigate("/");
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
         }
       } else {
-        const data = await response.json();
         setErrorMessage(data.message || "Failed to update the post.");
       }
     } catch (error) {
       console.error("Error updating the post.", error);
       setErrorMessage("An error occurred while updating the post.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -143,21 +153,25 @@ function EditPost() {
           maxLength={100}
           onChange={(e) => setUpdatedTitle(e.target.value)}
           placeholder="Title"
+          disabled={isSaving}
         />
 
         <QuillEditor
           token={token}
           content={updatedContent}
           setContent={setUpdatedContent}
-          uploadedImages={uploadedImages}
           setUploadedImages={setUploadedImages}
+          readOnly={isSaving}
         />
 
         <div className="new-post-btns">
-          <button type="button" onClick={(e) => handleSubmit(e, null)}>
+          <button type="button" onClick={(e) => handleSubmit(e, null, false)}>
             Save
           </button>
-          <button type="button" onClick={(e) => handleSubmit(e, !post.published)}>
+          <button type="button" onClick={(e) => handleSubmit(e, null, true)}>
+            Save & Exit
+          </button>
+          <button type="button" className="danger" onClick={(e) => handleSubmit(e, !post.published, true)}>
             {post.published ? "Unpublish" : "Publish"}
           </button>
 
@@ -167,6 +181,8 @@ function EditPost() {
         </div>
       </form>
       <ScrollToTop />
+
+      {showToast && <div className="toast-message">Saved changes.</div>}
     </div>
   );
 }

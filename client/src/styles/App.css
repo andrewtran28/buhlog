@@ -123,8 +123,7 @@ button:active {
 }
 
 .ql-editor p {
-  margin-bottom: 0.5rem !important;
-  line-height: 1.25rem;
+  margin-bottom: 1rem !important;
 }
 
 .ql-editor li {

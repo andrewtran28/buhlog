@@ -25,6 +25,7 @@ interface CommentSectionProps {
 }
 
 function CommentsSection({
+  postAuthor,
   comments,
   user,
   token,
@@ -158,7 +159,8 @@ function CommentsSection({
                 <li key={comment.id}>
                   <div className="comment">
                     <div className="comment-top">
-                      <strong>{comment.username}</strong>
+                      <strong>{comment.username} </strong>
+                      <strong className="comment-post-author">{comment.username === postAuthor && " AUTHOR"}</strong>
                       <span className="comment-date">{formatDateTime(comment.createdAt)}</span>
                     </div>
                     {user && user.username === comment.username && (

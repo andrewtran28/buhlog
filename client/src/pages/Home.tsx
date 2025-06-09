@@ -143,7 +143,6 @@ const Home = () => {
               <button onClick={() => setCurrentPage((prev) => prev + 1)}>Older Posts ➡</button>
             )}
           </div>
-          <br />
         </>
       )}
 

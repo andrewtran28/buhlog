@@ -6,6 +6,7 @@ const { handleValidationErrors, cleanHtmlContent } = require("../utils/validator
 const { generateUniqueSlug } = require("../utils/slugify");
 const DOMPurify = require("isomorphic-dompurify");
 const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const cheerio = require("cheerio");
 
 const s3 = new S3Client({
   region: process.env.BUCKET_REGION,

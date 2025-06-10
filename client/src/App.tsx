@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./utils/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Header from "./components/Header";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import Login from "./pages/Login";
@@ -10,7 +8,9 @@ import UserPage from "./pages/UserPage";
 import NewPost from "./pages/NewPost";
 import EditPost from "./pages/EditPost";
 import ErrorPage from "./pages/ErrorPage";
+import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "react-quill/dist/quill.snow.css";
 
 const App = () => {

@@ -160,6 +160,7 @@ function EditPost() {
           token={token}
           content={updatedContent}
           setContent={setUpdatedContent}
+          uploadedImages={uploadedImages}
           setUploadedImages={setUploadedImages}
           readOnly={isSaving}
         />

@@ -3,14 +3,14 @@ import ReactQuill, { Quill } from "react-quill";
 import ImageResize from "quill-image-resize";
 import "react-quill/dist/quill.snow.css";
 
-Quill.register("modules/imageResize", ImageResize);
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+Quill.register("modules/imageResize", ImageResize);
 
 interface QuillEditorProps {
   token: string;
   content: string;
   setContent: (value: string) => void;
+  uploadedImages: Set<string>;
   setUploadedImages: React.Dispatch<React.SetStateAction<Set<string>>>;
   existingContent?: string;
   readOnly?: boolean;
@@ -199,7 +199,27 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         [{ size: ["small", false, "large", "huge"] }],
         [{ header: "1" }, { header: "2" }],
         ["bold", "italic", "underline"],
-        [{ color: [] }, { background: [] }],
+        [
+          { color: [] },
+          {
+            background: [
+              "transparent",
+              "#f28b82",
+              "#fbbc04",
+              "#fff475",
+              "#ccff90",
+              "#a7ffeb",
+              "#cbf0f8",
+              "#aecbfa",
+              "#d7aefb",
+              "#fdcfe8",
+              "#e6c9a8",
+              "#e8eaed",
+              "#f5f5f5",
+              "#000000",
+            ],
+          },
+        ],
         [{ align: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
         [{ indent: "-1" }, { indent: "+1" }],

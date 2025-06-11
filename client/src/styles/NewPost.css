@@ -51,13 +51,6 @@
   line-height: 1.5rem;
 }
 
-.ql-editor pre {
-  background-color: #23241f;
-  color: #f8f8f2;
-  padding: 5px 10px;
-  margin: 0 10px 1rem 10px !important;
-}
-
 .new-post-btns button {
   margin: 10px 10px 10px 0;
 }

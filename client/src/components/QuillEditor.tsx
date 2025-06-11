@@ -145,9 +145,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const quillModules = {
     toolbar: {
       container: [
-        [{ size: ["small", false, "large", "huge"] }],
-        [{ header: "1" }, { header: "2" }],
-        ["bold", "italic", "underline"],
+        [{ header: [1, 2, 3, false] }, { font: [] }, { size: [] }],
+        ["bold", "italic", "underline", "strike", "code"],
         [
           { color: [] },
           {
@@ -169,11 +168,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             ],
           },
         ],
-        [{ align: [] }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ indent: "-1" }, { indent: "+1" }],
-        ["blockquote", "code-block"],
         ["link", "image"],
+        [{ align: [] }, { list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+        ["blockquote", "code-block"],
         ["clean"],
       ],
       handlers: {
@@ -184,7 +181,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       matchVisual: false, // Disable automatic <p> wrapping
     },
     imageResize: {
-      modules: ["Resize", "DisplaySize", "Toolbar"],
+      modules: ["Resize", "DisplaySize"],
     },
     history: {
       delay: 1000,
@@ -201,7 +198,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       value={content}
       onChange={setContent}
       modules={quillModules}
-      // scrollingContainer=".ql-editor"
     />
   );
 };

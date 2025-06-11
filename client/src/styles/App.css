@@ -131,6 +131,20 @@ button:active {
   margin-bottom: 0.25rem;
 }
 
+.ql-editor code {
+  background-color: #dfdfdf;
+  color: #ff0080;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.ql-editor pre {
+  background-color: #23241f;
+  color: #00b30c !important;
+  padding: 5px 10px;
+  margin: 0 10px 1rem 10px !important;
+}
+
 @media (max-width: 800px) {
   #title {
     font-size: 3.5rem;

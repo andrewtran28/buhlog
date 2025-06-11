@@ -10,7 +10,7 @@
   font-size: inherit;
   font-family: inherit;
   margin-bottom: 20px;
-  min-width: 600px;
+  width: min(600px, 97%);
 }
 
 #login label {
@@ -21,4 +21,11 @@
   font-size: 1.25rem;
   padding: 10px 40px;
   margin: 10px 0;
+}
+
+@media (max-width: 600px) {
+  #login input,
+  #login label {
+    font-size: 1.25rem;
+  }
 }

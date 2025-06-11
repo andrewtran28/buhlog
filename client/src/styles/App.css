@@ -145,6 +145,11 @@ button:active {
   margin: 0 10px 1rem 10px !important;
 }
 
+.ql-editor img {
+  border: 1px solid var(--font-dark);
+  max-width: 100%;
+}
+
 @media (max-width: 800px) {
   #title {
     font-size: 3.5rem;

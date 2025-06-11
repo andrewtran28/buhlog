@@ -1,5 +1,6 @@
 #article #title {
   font-size: 3.5rem;
+  line-height: 3.5rem;
 }
 
 .article-top {
@@ -152,16 +153,20 @@
   line-height: 1.5rem;
 }
 
-#article .ql-editor li {
+#article .ql-editor ol,
+#article .ql-editor ul {
+  margin: -0.5rem 0 1rem 0;
   line-height: 1.5rem;
 }
 
 #article h1 {
   font-size: 2em;
+  line-height: 2rem;
 }
 
 #article h2 {
   font-size: 1.5em;
+  line-height: 1.5rem;
 }
 
 #article .ql-editor pre {
@@ -200,4 +205,15 @@
 }
 #article .ql-editor .ql-indent-8:not(.ql-direction-rtl) {
   padding-left: 24em;
+}
+
+@media (max-width: 600px) {
+  #article #title {
+    font-size: 2.75rem;
+    line-height: 2.75rem;
+  }
+
+  .article-updated {
+    display: flex;
+  }
 }

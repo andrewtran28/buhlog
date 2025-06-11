@@ -12,6 +12,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "react-quill/dist/quill.snow.css";
+import "./styles/App.css";
 
 const App = () => {
   return (

@@ -94,7 +94,7 @@ header {
   }
 
   .header-right {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    font-size: clamp(1.25rem, 3vw, 1.25rem);
   }
 }
 
@@ -116,7 +116,7 @@ header {
   }
 
   .header-right {
-    font-size: clamp(0.95rem, 2vw, 1.25rem);
+    font-size: clamp(1.15rem, 2vw, 1.25rem);
   }
 
   #hello {
@@ -126,5 +126,6 @@ header {
   .header-right button {
     margin: 3px 3px 0 3px;
     padding: 3px;
+    font-size: 0.75rem;
   }
 }

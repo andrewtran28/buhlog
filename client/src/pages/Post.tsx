@@ -131,9 +131,7 @@ function Post() {
               </span>
             </div>
             {user && user.username === post.author && (
-              <span>
-                <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
-              </span>
+              <button onClick={() => navigate(`/post/${post.id}/edit`)}>Edit Post</button>
             )}
           </div>
           <hr />

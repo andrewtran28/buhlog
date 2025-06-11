@@ -26,57 +26,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 }) => {
   const quillRef = useRef<ReactQuill>(null);
 
-  useEffect(() => {
-    const quill = quillRef.current?.getEditor();
-    if (!quill) return;
-
-    const handleTextChange = () => {
-      const selection = quill.getSelection();
-      if (!selection) return;
-
-      const bounds = quill.getBounds(selection.index);
-      const container = quillRef.current?.container;
-
-      if (container) {
-        const scrollTop = container.scrollTop;
-
-        // Scroll so the cursor is visible inside the container
-        const topOffset = bounds.top + scrollTop;
-        const buffer = 200; // pixels above cursor to keep in view
-
-        const editorScroll = container.querySelector(".ql-container");
-        if (editorScroll && typeof topOffset === "number") {
-          editorScroll.scrollTo({
-            top: topOffset - buffer,
-          });
-        }
-      }
-    };
-
-    quill.on("text-change", handleTextChange);
-
-    return () => {
-      quill.off("text-change", handleTextChange);
-    };
-  }, []);
-
-  // Disable default link behaviour that causes scrolling up to toolbar
-  useEffect(() => {
-    const quillEl = quillRef.current?.container;
-    if (!quillEl) return;
-
-    const links = quillEl.querySelectorAll('a[href="#]');
-    links.forEach((link) => {
-      link.addEventListener("click", (e) => e.preventDefault());
-    });
-
-    return () => {
-      links.forEach((link) => {
-        link.removeEventListener("click", (e) => e.preventDefault());
-      });
-    };
-  });
-
   const addUploadedImage = (url: string) => {
     setUploadedImages((prev) => new Set(prev).add(url));
   };
@@ -115,7 +64,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           if (range) {
             editor.insertEmbed(range.index, "image", data.imageUrl);
             editor.setSelection(range.index + 1);
-            // setContent(editor.root.innerHTML); //Ensures content state is updated
+            setContent(editor.root.innerHTML); //Ensures content state is updated
           }
         }, 0);
       } catch (err) {
@@ -227,7 +176,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         ["link", "image"],
         ["clean"],
       ],
-
       handlers: {
         image: handleImageUpload,
       },
@@ -253,6 +201,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       value={content}
       onChange={setContent}
       modules={quillModules}
+      // scrollingContainer=".ql-editor"
     />
   );
 };

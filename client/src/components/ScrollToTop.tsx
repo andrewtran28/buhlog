@@ -6,7 +6,7 @@ function ScrollToTop() {
 
   useEffect(() => {
     const checkScroll = () => {
-      setShowButton(window.scrollY > window.innerHeight * 0.75);
+      setShowButton(window.scrollY > window.innerHeight * 0.6);
     };
 
     window.addEventListener("scroll", checkScroll);

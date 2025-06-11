@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 const { authenticateToken } = require("../utils/auth");
 const asyncHandler = require("express-async-handler");
 
-const uploadRouter = Router();
+const imageRouter = Router();
 
 const s3 = new S3Client({
   region: process.env.BUCKET_REGION,
@@ -29,7 +29,7 @@ const upload = multer({
   },
 });
 
-uploadRouter.post(
+imageRouter.post(
   "/",
   authenticateToken,
   upload.single("image"),
@@ -60,7 +60,7 @@ uploadRouter.post(
   })
 );
 
-uploadRouter.delete(
+imageRouter.delete(
   "/",
   authenticateToken,
   asyncHandler(async (req, res) => {
@@ -85,4 +85,4 @@ uploadRouter.delete(
   })
 );
 
-module.exports = uploadRouter;
+module.exports = imageRouter;

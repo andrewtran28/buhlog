@@ -45,6 +45,12 @@
   margin: 1rem 0 0.8rem 0;
 }
 
+.ql-editor ol,
+.ql-editor ul {
+  margin: -0.5rem 0 1rem 0;
+  line-height: 1.5rem;
+}
+
 .ql-editor pre {
   background-color: #23241f;
   color: #f8f8f2;

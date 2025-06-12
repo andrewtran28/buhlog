@@ -7,7 +7,6 @@ import ScrollToTop from "../components/ScrollToTop";
 import "../styles/Home.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const POSTS_PER_PAGE = 5;
 
 type Post = {
   id: number;
@@ -37,6 +36,7 @@ const Home = () => {
     return posts.filter((p) => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [posts, searchTerm]);
 
+  const POSTS_PER_PAGE = 5;
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const currentPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);

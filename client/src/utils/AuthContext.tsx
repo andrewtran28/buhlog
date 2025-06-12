@@ -39,9 +39,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     }
 
-    setLoading(false); // Stop loading after checking the token
+    setLoading(false);
   }, []);
 
+  //Sets JWT token in session storage
   const login = (newToken: string) => {
     sessionStorage.setItem("token", newToken);
     const decoded = jwtDecode<User>(newToken);
@@ -49,6 +50,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setToken(newToken);
   };
 
+  //Removes JWT token from session storage
   const logout = () => {
     sessionStorage.removeItem("token");
     setUser(null);
@@ -62,6 +64,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   return <AuthContext.Provider value={{ user, token, login, logout, loading }}>{children}</AuthContext.Provider>;
 };
 
+//Custom hook to allow components to access the "user" context (e.g., user.username, user.id, user.isAuthor, etc. for Protexcted Routes)
 const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

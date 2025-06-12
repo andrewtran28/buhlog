@@ -1,3 +1,4 @@
+//Fetch all images used in post
 const getUsedImageUrls = (html: string): Set<string> => {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const imgs = doc.querySelectorAll("img");
@@ -8,6 +9,7 @@ const getUsedImageUrls = (html: string): Set<string> => {
   return used;
 };
 
+//Delete any previously uploaded images that are no longer used in the post
 const deleteUnusedImages = async (
   uploadedImages: Set<string>,
   usedUrls: Set<string>,

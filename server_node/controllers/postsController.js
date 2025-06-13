@@ -19,7 +19,13 @@ const s3 = new S3Client({
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await prisma.post.findMany({
     where: { published: true },
-    include: {
+    //Only select the necessary fields (exclude post content)
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      createdAt: true,
+      updatedAt: true,
       comments: true,
       user: {
         select: { username: true },

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import QuillEditor from "../components/QuillEditor";
-import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
+import QuillEditor, { QuillEditorHandle } from "../components/QuillEditor";
+import { convertBase64ToS3, getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
 import ScrollToTop from "../components/ScrollToTop";
 
 type Post = {
@@ -25,10 +25,11 @@ function EditPost() {
   const [originalImages, setOriginalImages] = useState<Set<string>>(new Set());
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedContent, setUpdatedContent] = useState("");
-  const [uploadedImages, setUploadedImages] = useState<Set<string>>(new Set());
   const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  const editorRef = useRef<QuillEditorHandle>(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -64,15 +65,20 @@ function EditPost() {
   ) => {
     e.preventDefault();
     if (!post) return;
-    if (!updatedTitle || !updatedContent) {
+
+    const currentHTML = editorRef.current?.getHTML() || "";
+
+    if (!updatedTitle || !currentHTML) {
       setErrorMessage("Both title and content are required.");
       return;
     }
 
     setIsSaving(true);
 
-    const newImageUrls = getUsedImageUrls(updatedContent);
-    await deleteUnusedImages(originalImages, newImageUrls, token, API_BASE_URL);
+    //Convert all base64 images to S3 URL links
+    const { html, newImageUrls } = await convertBase64ToS3(currentHTML, token, API_BASE_URL, post.id);
+    setUpdatedContent(html);
+    await deleteUnusedImages(html, post.id, token, API_BASE_URL);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/post/${post.id}`, {
@@ -83,7 +89,7 @@ function EditPost() {
         },
         body: JSON.stringify({
           title: updatedTitle,
-          content: updatedContent,
+          content: html,
           published: publish !== null ? publish : post.published,
         }),
       });
@@ -92,11 +98,7 @@ function EditPost() {
 
       if (response.ok) {
         if (exitAfterSave) {
-          if (data.post.published) {
-            navigate(`/post/${data.post.slug}`);
-          } else {
-            navigate("/");
-          }
+          navigate(data.post.published ? `/post/${data.post.slug}` : "/");
         } else {
           setShowToast(true);
           setTimeout(() => setShowToast(false), 3000);
@@ -157,11 +159,10 @@ function EditPost() {
         />
 
         <QuillEditor
+          ref={editorRef}
           token={token}
           content={updatedContent}
           setContent={setUpdatedContent}
-          uploadedImages={uploadedImages}
-          setUploadedImages={setUploadedImages}
           readOnly={isSaving}
         />
 

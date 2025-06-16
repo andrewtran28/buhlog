@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import QuillEditor from "../components/QuillEditor";
-import { getUsedImageUrls, deleteUnusedImages } from "../utils/QuillUtils";
+import { deleteUnusedImages } from "../utils/QuillUtils";
 import ScrollToTop from "../components/ScrollToTop";
 import "../styles/NewPost.css";
 
@@ -36,9 +36,6 @@ function NewPost() {
       return;
     }
 
-    const usedImageUrls = getUsedImageUrls(content);
-    await deleteUnusedImages(uploadedImages, usedImageUrls, token, API_BASE_URL);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/post`, {
         method: "POST",
@@ -51,8 +48,13 @@ function NewPost() {
 
       const data = await response.json();
       if (response.ok) {
+        const createdPost = data.post;
+
+        // Delete unused images with postId + content
+        await deleteUnusedImages(content, createdPost.id, token, API_BASE_URL);
+
         if (isPublished) {
-          navigate(`/post/${data.post.slug}`);
+          navigate(`/post/${createdPost.slug}`);
         } else {
           navigate("/");
         }

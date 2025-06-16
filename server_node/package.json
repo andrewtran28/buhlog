@@ -30,6 +30,7 @@
     "express-async-handler": "^1.2.0",
     "express-validator": "^7.2.1",
     "isomorphic-dompurify": "^2.20.0",
+    "jsdom": "^26.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "passport": "^0.7.0",

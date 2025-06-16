@@ -3,7 +3,6 @@ import ReactQuill, { Quill } from "react-quill";
 import ImageResize from "quill-image-resize";
 import "react-quill/dist/quill.snow.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 Quill.register("modules/imageResize", ImageResize);
 
 interface QuillEditorProps {
@@ -18,6 +17,22 @@ export interface QuillEditorHandle {
   getHTML: () => string;
 }
 
+function getQuillIndexFromRange(range: Range, quill: Quill, root: HTMLElement): number {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return 0;
+
+  const tempSelection = selection.getRangeAt(0);
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  const index = quill.getSelection()?.index || 0;
+
+  selection.removeAllRanges();
+  selection.addRange(tempSelection);
+
+  return index;
+}
+
 const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
   ({ token, content, setContent, existingContent, readOnly }, ref) => {
     const quillRef = useRef<ReactQuill>(null);
@@ -27,6 +42,80 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
         return quillRef.current?.editor?.root.innerHTML || "";
       },
     }));
+
+    useEffect(() => {
+      const quill = quillRef.current?.editor;
+      if (!quill) return;
+
+      const editorRoot = quill.root;
+
+      const handlePaste = async (e: ClipboardEvent) => {
+        if (!e.clipboardData) return;
+
+        const items = e.clipboardData.items;
+        for (const item of items) {
+          if (item.type.startsWith("image/")) {
+            e.preventDefault();
+
+            const file = item.getAsFile();
+            if (!file) continue;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+              const base64 = reader.result as string;
+              const range = quill.getSelection(true);
+              quill.insertEmbed(range?.index || 0, "image", base64);
+              quill.setSelection((range?.index || 0) + 1);
+            };
+            reader.readAsDataURL(file);
+            break;
+          }
+        }
+      };
+
+      editorRoot.addEventListener("paste", handlePaste as EventListener);
+
+      const handleDrop = (e: DragEvent) => {
+        e.preventDefault();
+        if (!e.dataTransfer) return;
+
+        const quill = quillRef.current?.editor;
+        if (!quill) return;
+
+        const files = Array.from(e.dataTransfer.files);
+        for (const file of files) {
+          if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const base64 = reader.result as string;
+              const dropPosition = document.caretRangeFromPoint
+                ? document.caretRangeFromPoint(e.clientX, e.clientY)
+                : null;
+              const index = dropPosition
+                ? getQuillIndexFromRange(dropPosition, quill, quill.root)
+                : quill.getSelection()?.index || 0;
+
+              quill.insertEmbed(index, "image", base64);
+              quill.setSelection(index + 1);
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+      };
+
+      const handleDragOver = (e: DragEvent) => {
+        e.preventDefault(); // Needed to allow drop
+      };
+
+      editorRoot.addEventListener("drop", handleDrop as EventListener);
+      editorRoot.addEventListener("dragover", handleDragOver as EventListener);
+
+      return () => {
+        editorRoot.removeEventListener("paste", handlePaste as EventListener);
+        editorRoot.removeEventListener("drop", handleDrop as EventListener);
+        editorRoot.removeEventListener("dragover", handleDragOver as EventListener);
+      };
+    }, []);
 
     const handleImageUpload = useCallback(() => {
       const input = document.createElement("input");
